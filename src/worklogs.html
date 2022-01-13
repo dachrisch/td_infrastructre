@@ -1,0 +1,104 @@
+<div id="worklogTable" class="table-fixed">
+  <div class="card">
+    <div class="card-body">
+      <p class="card-text">Select entries with Booking Information from table below and book them to Tempo. Only entries
+        configured and without previous booking are selectable.</p>
+    </div>
+  </div>
+  <div id="toolbar" class="container">
+    <div class="row">
+      <div class="col-3">
+        <button type="button" class="btn btn-primary" onclick="informDateSelection()" title="reload table">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+      <div class="col-9">
+        <div class="float-left btn-group">
+          <button id="booking_button" type="button" class="btn btn-primary" onclick="onSubmitSelection()">
+            <span class="spinner-border-sm" role="status" aria-hidden="true"></span>
+            book selected
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table id="worklog-table" data-filter-control="true" data-show-search-clear-button="false" data-group-by="true"
+    data-group-by-toggle="true" data-group-by-show-toggle-icon="true" data-group-by-field="date" data-toolbar="#toolbar"
+    data-toolbar-align="left" data-loading-template="loadingTemplate">
+    <thead>
+      <tr>
+        <th data-field="state" data-checkbox="true" data-formatter="bookableFormatter"></th>
+        <th data-field="date" data-filter-control="select">Date</th>
+        <th data-field="start_time">From</th>
+        <th data-field="end_time">To</th>
+        <th data-field="summary" data-filter-control="input">Summary</th>
+        <th data-field="booking_issue" data-filter-control="select" data-formatter="bookingInfoFormatter">Booking
+          Information</th>
+        <th data-field="booking_link" data-formatter="bookingLinkFormatter" data-filter-control="select"
+          data-filter-data-collector="bookingFilterCollector" data-filter-custom-search="bookingCustomSearch">Existing
+          Booking</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<script>
+  function onWorklogTabShow() {
+    informDateSelection()
+  }
+
+  function onWorklogsDateUpdated(from_date, to_date) {
+    console.log(`loading data from ${from_date} to ${to_date}...`)
+    $('#worklog-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading')
+
+    google.script.run
+      .withSuccessHandler(showWorklogs)
+      .getWorklogsAsJson(from_date.valueOf(), to_date.valueOf())
+  }
+
+  function showWorklogs(data) {
+    console.log(`show worklogs ${JSON.stringify(data)}...`)
+    $('#worklog-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading').bootstrapTable('load', data).bootstrapTable('hideLoading')
+    bookingEnd()
+  }
+
+  function bookingStart() {
+    $('#booking_button span').addClass('spinner-border')
+    $('#booking_button').prop("disabled",true);
+  }
+
+  function bookingEnd() {
+    $('#booking_button span').removeClass('spinner-border')
+    $('#booking_button').prop("disabled",false);
+  }
+
+  function onSubmitSelection() {
+    bookingStart()
+    let selections = $('#worklog-table').bootstrapTable('getSelections');
+    if(selections && selections.length > 0) {
+      let issue = $('#default_issue').val()
+      console.log(`booking ${selections.length} to default ${issue}`)
+      google.script.run
+        .withFailureHandler(onBookingError)
+        .withSuccessHandler(onBookingSuccess)
+        .book_selections(selections, issue);
+    } else {
+      bookingEnd()
+      showAlert('info', 'Nothing selected', 'Select at least one row')
+    } 
+  }
+
+  function onBookingError(response) {
+    bookingEnd()
+    showAlert('error', 'Booking Failed', response)
+    console.log(response)
+    informDateSelection()
+  }
+
+  function onBookingSuccess(booked_entries) {
+    let booked_message = booked_entries.map(booking => `<li>${moment(booking.started).format('DD.MM.YYYY HH:mm')} ${booking.comment}</li>`)
+    showAlert('info', 'Booking Successful', `<ul>${booked_message.join('')}</ul>`)
+    informDateSelection()
+  }
+
+</script>

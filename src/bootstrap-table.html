@@ -1,0 +1,118 @@
+<!-- Bootstrap Table -->
+<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+<link href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css" rel="stylesheet">
+<!-- Group Rows -->
+<link href="https://unpkg.com/bootstrap-table@1.19.1/dist/extensions/group-by-v2/bootstrap-table-group-by.css"
+  rel="stylesheet">
+<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/extensions/group-by-v2/bootstrap-table-group-by.min.js">
+</script>
+<!-- Filter -->
+<script
+  src="https://unpkg.com/bootstrap-table@1.19.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
+</script>
+<!-- Icons (delete symbol filter) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+<!-- Datepicker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+<script>
+  function bookableFormatter(value, row, index) {
+    return {
+      disabled: !(null == row.booking_info.booking_link && null != row.booking_info.issue_key),
+      checked: false
+    }
+  }
+
+  function configuraleFormatter(value, row, index) {
+    return {
+      disabled: null != row.booking_info.booking_link,
+      checked: false
+    }
+  }
+
+  function bookingInfoFormatter(value, row, index) {   
+    let ret=row.booking_info.issue_key
+    if(row.booking_info.billable) {
+      ret=`€-${row.booking_info.issue_key}(${row.booking_info.hour_factor}/h)`
+    }
+    return ret
+  }
+
+  function bookingLinkFormatter(value, row, index) {
+    let link=value
+    if(row.booking_info.booking_link) {
+      link=`<a href="https://jira.tdservice.cloud/secure/Tempo.jspa#/my-work/day?date=${moment(row.date,'DD.MM.YYYY').format('YYYY-MM-DD')}" target="_blank">${row.booking_info.booking_link}</a>`
+    } else {
+      link='-'
+    }
+    return link
+  }
+
+  function noBookingFilterCollector(value, row) {
+    if(!row.booking_info.booking_link) {
+      return 'not booked'
+    }
+  }
+
+  function bookingFilterCollector(value, row) {
+    if(row.booking_info.booking_link) {
+      return 'already booked'
+    } else {
+      return 'not booked'
+    }
+  }
+
+  function bookingCustomSearch(value, row) {
+    console.log(value)
+    console.log(row)
+    if('not booked' == value) {
+      return '-' == row
+    } else if ('already booked' == value) {
+      return '-' != row
+    }
+  }
+
+  function startDateFormatter(value, row, index) {
+    return moment(row.started).format('DD.MM.YYYY')
+  }
+
+  function startTimeFormatter(value, row) {
+    return moment(row.started).format('HH:mm')
+  }
+
+  function endTimeFormatter(value, row) {
+    return moment(row.started).add(row.timeSpentSeconds, 'seconds').format('HH:mm')
+  }
+
+  function billableFormatter(value, row) {
+    if(row.attributes && row.attributes._NotBillable_ && row.attributes._NotBillable_.value=='false') {
+      return 'x'
+    } else {
+      return '-'
+    }
+  }
+
+  function bookingIssueFormatter(value, row) {
+    return row.issue.key
+  }
+
+  function bookingSummaryFormatter(value, row) {
+    return row.issue.summary
+  }
+
+  function loadingTemplate(message) {
+    return '<div class="spinner-border" role="status" id="table_status"><span class="visually-hidden">Loading...</span></div>'
+  }
+
+  function showAlert(level, heading, message) {
+    $('#alerts').append(`<div class="alert alert-${level} alert-dismissible fade show" role="alert"><strong>${heading}</strong><p>${message}</p><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`)
+    $("#alerts").fadeTo(2000, 500).slideUp(500, function(){
+      $("#alerts").slideUp(500);
+      $(".btn-close").click()
+    });
+  }
+
+</script>

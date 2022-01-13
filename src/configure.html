@@ -1,0 +1,177 @@
+<div id="configTable" class="table-fixed">
+  <div class="card">
+    <div class="card-body">
+      <p class="card-text">Select Booking Issue from Tempo and Booking Information, then configure selected entries from
+        table.</p>
+    </div>
+  </div>
+  <div id="config-toolbar" class="container">
+    <div class="row align-items-center">
+      <div class="col-1">
+        <button type="button" class="btn btn-primary" onclick="informDateSelection()" title="reload table">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+      <div class="col">
+        <div class="auto-search-wrapper form-floating">
+          <input class="form-control" type="text" id="booking_issue" placeholder="tempo issue key">
+          <label for="booking_issue">Booking Issue</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group">
+          <span class="input-group-text col-md-6">Billable</span>
+          <div class="input-group-text">
+            <input id="config_billable" class="form-check-input mt-0" type="checkbox" aria-label="Billable">
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text col-md-6">Hour Rate</span>
+          <input class="form-control" type="number" id="config_hour_factor" value="1" step="0.01">
+        </div>
+      </div>
+      <div class="col">
+        <div class="float-left btn-group">
+          <button id="configure_button" type="button" class="btn btn-primary" onclick="onApplyBookingIssue()">
+            <span class="spinner-border-sm" role="status" aria-hidden="true"></span>
+            Apply to Selection
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table id="config-table" data-filter-control="true" data-show-search-clear-button="false"
+    data-toolbar="#config-toolbar" data-toolbar-align="left" data-loading-template="loadingTemplate">
+    <thead>
+      <tr>
+        <th data-field="state" data-checkbox="true" data-formatter="configuraleFormatter"></th>
+        <th data-field="date" data-filter-control="select">Date</th>
+        <th data-field="start_time">From</th>
+        <th data-field="end_time">To</th>
+        <th data-field="summary" data-filter-control="input">Summary</th>
+        <th data-field="booking_issue" data-filter-control="select" data-formatter="bookingInfoFormatter">Booking Ticket
+        </th>
+        <th data-field="booking_link" data-formatter="bookingLinkFormatter" data-filter-control="select"
+          data-filter-data-collector="noBookingFilterCollector" data-filter-custom-search="bookingCustomSearch">Existing
+          Booking</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<!-- Autocomplete https://tomik23.github.io/autocomplete/#complex-example -->
+<script src="https://cdn.jsdelivr.net/gh/tomik23/autocomplete@1.7.2/dist/js/autocomplete.min.js"></script>
+<link rel="stylesheet" type="text/css"
+  href="https://cdn.jsdelivr.net/gh/tomik23/autocomplete@1.7.2/dist/css/autocomplete.min.css" />
+
+<script>
+  function onConfigureTabShow() {
+
+    informDateSelection()
+    initIssueSearch()
+    
+  }
+
+  function initIssueSearch() {
+    if(!$("#booking_issue").data("autocomplete-initialized")) {
+      disableConfigure()
+      new Autocomplete('booking_issue', {
+        clearButton: true,
+        onSearch: ({ currentValue }) => {
+        disableConfigure()
+        return new Promise((resolve) => {
+          console.log('searching ' + currentValue)
+          google.script.run
+          .withSuccessHandler(issues => {
+            const flat_issues = issues.sections.map(section => section.issues).flat()
+            resolve(flat_issues)
+            })
+          .tempoIssues(currentValue)
+        });
+        },
+
+        onResults: ({ matches }) =>
+          matches.map((el) => `<li class="form-control">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">${el.summaryText}</div>
+                ${el.key}
+              </div>
+            </div>
+            </li>`).join(''),
+        onSubmit: ({ index, element, object, results }) => {
+          element.value=object.key
+          enableConfigure()
+        },
+        onReset: () => disableConfigure(),
+      });
+    }
+    $("#booking_issue").data("autocomplete-initialized", true);
+  }
+
+  function onConfigureDateUpdated(from_date, to_date) {
+    console.log(`loading data from ${from_date} to ${to_date}...`)
+    $('#config-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading')
+    google.script.run
+      .withSuccessHandler(showConfigWorklogs)
+      .getWorklogsAsJson(from_date.valueOf(), to_date.valueOf())
+  }
+
+  function showConfigWorklogs(data) {
+    console.log(`show worklogs ${JSON.stringify(data)}...`)
+    $('#config-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading').bootstrapTable('load', data).bootstrapTable('hideLoading')
+    bookingEnd()
+  }
+
+
+  function onApplyBookingIssue() {
+    configureStart()
+    let selections = $('#config-table').bootstrapTable('getSelections');
+    if(selections && selections.length > 0) {
+
+      let issue = $('#booking_issue').val()
+      let billable = $('#config_billable').is(':checked')
+      let hour_factor = $('#config_hour_factor').val()
+      console.log(`configuring ${selections.length} worklogs to ${issue}, billable=${billable}, factor=${hour_factor}`)
+      google.script.run
+        .withFailureHandler(onConfigureError)
+        .withSuccessHandler(onConfigureSuccess)
+        .configure_selections(selections, issue, billable, hour_factor);
+    } else {
+      configureEnd()
+      showAlert('info', 'Nothing selected', 'Select at least one row')
+    }
+  }
+
+  function onConfigureError(response) {
+    configureEnd()
+    showAlert('error', 'Configuration Failed', response)
+    console.log(response)
+  }
+
+  function onConfigureSuccess(configured_entries) {
+    console.log(configured_entries)
+    let config_message = configured_entries.map(configured_entry => `<li>${moment(configured_entry.started).format('DD.MM.YYYY HH:mm')} ${configured_entry.summary} => ${bookingInfoFormatter(1, configured_entry)}</li>`)
+    showAlert('info', 'Configuration Successful', `<ul>${config_message.join('')}</ul>`)
+    informDateSelection()
+    configureEnd()
+  }
+
+  function configureStart() {
+    $('#configure_button span').addClass('spinner-border')
+    disableConfigure()
+  }
+
+  function configureEnd() {
+    $('#configure_button span').removeClass('spinner-border')
+    enableConfigure()
+  }
+
+  function enableConfigure() {
+    $('#configure_button').prop("disabled",false);
+  }
+
+  function disableConfigure() {
+    $('#configure_button').prop("disabled",true);
+  }
+
+</script>

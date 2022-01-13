@@ -1,0 +1,104 @@
+<div id="bookingTable" class="table-fixed">
+  <div class="card">
+    <div class="card-body">
+      <p class="card-text">Select Bookings to delete from Tempo.</p>
+    </div>
+  </div>
+  <div id="booking-toolbar" class="container">
+    <div class="row">
+      <div class="col-3">
+        <button type="button" class="btn btn-primary" onclick="informDateSelection()" title="reload table">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+      <div class="col-9">
+        <div class="float-left btn-group">
+          <button id="deletion_button" type="button" class="btn btn-primary" onclick="onSubmitBookingDeletion()">
+            <span class="spinner-border-sm" role="status" aria-hidden="true"></span>
+            delete selected
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table id="booking-table" data-filter-control="true" data-show-search-clear-button="false"
+    data-toolbar="#booking-toolbar" data-toolbar-align="left" data-loading-template="loadingTemplate">
+    <thead>
+      <tr>
+        <th data-field="state" data-checkbox="true"></th>
+        <th data-field="date" data-filter-control="select" data-formatter="startDateFormatter">Date</th>
+        <th data-field="start_time" data-formatter="startTimeFormatter">From</th>
+        <th data-field="end_time" data-formatter="endTimeFormatter">To</th>
+        <th data-field="comment" data-filter-control="input">Summary</th>
+        <th data-field="booking_issue" data-filter-control="select" data-formatter="bookingIssueFormatter">Booking
+          Ticket</th>
+        <th data-field="booking_summary" data-filter-control="select" data-formatter="bookingSummaryFormatter">Booking
+          Summary</th>
+        <th data-field="billable" data-filter-control="select" data-formatter="billableFormatter">Billable</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<script>
+  function onBookingTabShow() {
+    informDateSelection()
+  }
+
+  function onBookingDateUpdated(from_date, to_date) {
+    console.log(`loading data from ${from_date} to ${to_date}...`)
+    $('#booking-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading')
+
+    google.script.run
+      .withFailureHandler(onFailureShowingBookings)
+      .withSuccessHandler(showBookings)
+      .bookingsInRangeFromTime(from_date.valueOf(), to_date.valueOf())
+  }
+
+  function onFailureShowingBookings(error) {
+    console.error(error)
+  } 
+
+  function showBookings(data) {
+    console.log(`show bookings ${JSON.stringify(data)}...`)
+    $('#booking-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading').bootstrapTable('load', data).bootstrapTable('hideLoading')
+    deletionEnd()
+  }
+
+  function onSubmitBookingDeletion() {
+    deletionStart()
+    let selections = $('#booking-table').bootstrapTable('getSelections');
+    if(selections && selections.length > 0) {
+      google.script.run
+        .withFailureHandler(onDeletionError)
+        .withSuccessHandler(onDeletionSuccess)
+        .deleteBookingsById(selections);
+    } else {
+      deletionEnd()
+      showAlert('info', 'Nothing selected', 'Select at least one row')
+    }  
+  }
+
+  function onDeletionError(response) {
+    deletionEnd()
+    showAlert('error', 'Booking Failed', response)
+    console.log(response)
+  }
+
+  function onDeletionSuccess(deleted_bookings) {
+    let booked_message = deleted_bookings.map(booking => `<li>${moment(booking.started).format('DD.MM.YYYY HH:mm')} ${booking.comment}</li>`)
+    showAlert('info', 'Deletion Successful', `<ul>${booked_message.join('')}</ul>`)
+    informDateSelection()
+  }
+
+  function deletionStart() {
+    $('#deletion_button span').addClass('spinner-border')
+    $('#deletion_button').prop("disabled",true);
+  }
+
+  function deletionEnd() {
+    $('#deletion_button span').removeClass('spinner-border')
+    $('#deletion_button').prop("disabled",false);
+  }
+
+</script>

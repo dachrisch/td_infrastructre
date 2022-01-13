@@ -1,0 +1,59 @@
+<div id="tempo">
+  <span id="tempo_status">
+    <span>Checking Tempo connection...</span>
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  </span>
+  <div id="tempo_connected" style="display: none;">
+    <span>Connected as</span>
+    <span id="tempo_user"></span>
+  </div>
+  <div id="tempo_disconnected" style="display: none;">
+    <span>You need to obtain a <a href="https://jira.tdservice.cloud/secure/ViewProfile.jspa?selectedTab=com.atlassian.pats.pats-plugin:jira-user-personal-access-tokens" target="_blank">token</a> to connect to Jira/Tempo</span>
+    <div class="input-group">
+      <div class="form-floating">
+        <input type="text" class="form-control" id="tempo_token">
+        <label for="tempo_token">Tempo token</label>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="newTempoToken()">connect</button>
+    </div>
+  </div>
+</div>
+<script>
+  function connectTempo() {
+    console.log('attempting tempo connection')
+    $('#tempo_status').show()
+    google.script.run
+      .withFailureHandler(showTempoConnect)
+      .withSuccessHandler(showTempoConnected)
+      .connectToTempo()
+
+  };
+
+  function showTempoConnect() {
+    console.log('tempo disconnected')
+    $('#tempo_connected').hide();
+    $('#tempo_disconnected').show();
+    $('#tempo_status').hide()
+    onTempoConnect(false)
+  }
+
+  function showTempoConnected(user) {
+    console.log(`tempo connected ${user}`)
+    $('#tempo_connected').show();
+    $('#tempo_disconnected').hide();
+    $('#tempo_user').text(user)
+    onTempoConnect(true)
+    $('#tempo_status').hide()
+  }
+
+  function newTempoToken() {
+    let token=$('#tempo_token').val()
+    console.log(`storing new token ${JSON.stringify(token)}`)
+    google.script.run
+      .withSuccessHandler(connectTempo)
+      .store_tempo_token(token)
+  }
+
+</script>
