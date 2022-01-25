@@ -78,15 +78,15 @@
       new Autocomplete('booking_issue', {
         clearButton: true,
         onSearch: ({ currentValue }) => {
-        disableConfigure()
-        return new Promise((resolve) => {
-          console.log('searching ' + currentValue)
-          google.script.run
-          .withSuccessHandler(issues => {
-            const flat_issues = issues.sections.map(section => section.issues).flat()
-            resolve(flat_issues)
-            })
-          .tempoIssues(currentValue)
+          disableConfigure()
+          return new Promise((resolve) => {
+            console.log('searching ' + currentValue)
+            google.script.run
+            .withSuccessHandler(issues => {
+              const flat_issues = issues.sections.map(section => section.issues).flat()
+              resolve(flat_issues)
+              })
+            .tempoIssues(currentValue)
         });
         },
 
@@ -104,8 +104,8 @@
         },
         onReset: () => disableConfigure(),
       });
-    }
     $("#booking_issue").data("autocomplete-initialized", true);
+    }
   }
 
   function onConfigureDateUpdated(from_date, to_date) {

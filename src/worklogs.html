@@ -76,12 +76,11 @@
     bookingStart()
     let selections = $('#worklog-table').bootstrapTable('getSelections');
     if(selections && selections.length > 0) {
-      let issue = $('#default_issue').val()
-      console.log(`booking ${selections.length} to default ${issue}`)
+      console.log(`booking ${selections.length} worklogs`)
       google.script.run
         .withFailureHandler(onBookingError)
         .withSuccessHandler(onBookingSuccess)
-        .book_selections(selections, issue);
+        .book_selections(selections);
     } else {
       bookingEnd()
       showAlert('info', 'Nothing selected', 'Select at least one row')

@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 import os
+import platform
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser
 
@@ -62,9 +63,11 @@ class GoogleAppScriptProjectDownloader(object):
 
     def __init__(self, profile='Profile 1'):
         self.log = logging.getLogger(self.__class__.__name__).info
+        chrome_path = {'macOs' : '~/Library/Application Support/Google/Chrome',
+                       'Linux' : '~/.config/google-chrome'}
         self.cookies = browser_cookie3.chrome(domain_name='.google.com',
                                               cookie_file=expanduser(path.join(
-                                                  '~/Library/Application Support/Google/Chrome',
+                                                  chrome_path[platform.system()],
                                                   profile,
                                                   'Cookies')))
 

@@ -4,7 +4,7 @@
  * @return {tempoBooking}
  */
 class tempoBooking {
-  static fromElement(element, default_issue) {
+  static fromElement(element) {
     let date_parts = element.date.split('.')
     let time_parts_start = element.start_time.split(':')
     let time_parts_end = element.end_time.split(':')
@@ -13,10 +13,8 @@ class tempoBooking {
     end_date.setHours(time_parts_end[0])
     end_date.setMinutes(time_parts_end[1])
     let duration = (end_date - start_date) / 1000
-    let booking_info = element.booking_info || new bookingInfo(default_issue)
-    if (!booking_info.issue_key) {
-      booking_info.issue_key = default_issue
-    }
+    let booking_info = element.booking_info || new bookingInfo()
+    
     return new tempoBooking(start_date, duration, element.summary, booking_info)
   }
 

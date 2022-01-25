@@ -40,6 +40,9 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="booking-tab" data-bs-toggle="tab" data-bs-target="#booking" type="button" role="tab" aria-controls="profile" aria-selected="false">Bookings</button>
         </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="billing-tab" data-bs-toggle="tab" data-bs-target="#billing" type="button" role="tab" aria-controls="profile" aria-selected="false">Billings</button>
+        </li>
       </ul>
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade" id="configure" role="tabpanel" aria-labelledby="configure-tab">
@@ -50,6 +53,9 @@
         </div>
         <div class="tab-pane fade" id="booking" role="tabpanel" aria-labelledby="booking-tab">
           <?!= include('bookings'); ?>
+        </div>
+        <div class="tab-pane fade" id="billing" role="tabpanel" aria-labelledby="billing-tab">
+          <?!= include('billings'); ?>
         </div>
       </div>
     </div>
@@ -147,6 +153,9 @@
       if($('#configure-tab').hasClass('active')) {
         onConfigureDateUpdated(start, end) 
       }
+      if($('#billing-tab').hasClass('active')) {
+        onBillingDateUpdated(start, end) 
+      }
     }
 
     function addTabEvents() {
@@ -160,6 +169,10 @@
 
       document.querySelector('#booking-tab').addEventListener('shown.bs.tab', function (event) {
         onBookingTabShow()
+      })
+
+      document.querySelector('#billing-tab').addEventListener('shown.bs.tab', function (event) {
+        onBillingTabShow()
       })
     }
 
