@@ -1,0 +1,227 @@
+<!-- Modal -->
+<div class="modal fade" id="automate_export" tabindex="-1" aria-labelledby="automate_export_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="automate_export_label">Configure automatic export</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form">
+          <div class="auto-search-wrapper form-floating mb-3">
+            <input class="form-control" type="text" id="spreadsheed_url" placeholder="spreadsheed url">
+            <label for="spreadsheed_url">Export Sheet</label>
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">Select time of day</span>
+            <select id="export_hour" class="form-select" aria-label="Starting hour">
+              <option selected value="6">Morning (06:00)</option>
+              <option value="12">Midday (12:00)</option>
+              <option value="18">Evening (18:00)</option>
+          </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="remove_export_button" type="button" class="btn btn-warning" onclick="onSubmitRemoveExportTrigger()">
+          Remove Trigger
+        </button>
+        <button id="configure_export_button" type="button" class="btn btn-primary" onclick="onSubmitConfigureExportTrigger()">
+          <span class="spinner-border-sm" role="status" aria-hidden="true"></span>
+          Create Trigger
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Table -->
+<div id="billingsTable" class="table-fixed">
+  <div class="card">
+    <div class="card-body">
+      <p class="card-text">Export billings into Spreadsheet.</p>
+    </div>
+  </div>
+  <div id="billing-toolbar" class="container">
+    <div class="row">
+      <div class="col-1 w-auto">
+        <button type="button" class="btn btn-primary" onclick="informDateSelection()" title="reload table">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+      <div class="col-3 w-auto">
+        <div class="float-left btn-group">
+          <button id="export_button" type="button" class="btn btn-primary" onclick="onSubmitBillingExport()">
+            <span class="spinner-border-sm" role="status" aria-hidden="true"></span>
+            export billings
+          </button>
+        </div>
+      </div>
+      <div class="col">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#automate_export">
+          automatic export
+        </button>
+      </div>
+    </div>
+  </div>
+  <table id="billing-table" data-filter-control="true" data-show-search-clear-button="false"
+    data-toolbar="#billing-toolbar" data-toolbar-align="middle" data-loading-template="loadingTemplate">
+    <thead>
+      <tr>
+        <th data-field="state" data-checkbox="true"></th>
+        <th data-field="date" data-filter-control="select">Date</th>
+        <th data-field="start_time">From</th>
+        <th data-field="end_time">To</th>
+        <th data-field="summary" data-filter-control="input">Summary</th>
+        <th data-field="booking_issue" data-filter-control="select" data-formatter="bookingInfoFormatter">Booking
+          Information</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<script>
+  function onBillingTabShow() {
+    informDateSelection()
+    if(!$("#spreadsheed_url").data("autocomplete-initialized")) {
+      new Autocomplete('spreadsheed_url', {
+        clearButton: true,
+        onSearch: ({ currentValue }) => {
+          return new Promise((resolve) => {
+            console.log('searching ' + currentValue)
+            google.script.run
+            .withSuccessHandler(sheets => {
+                resolve(sheets.filter(sheet=>sheet.name.includes(currentValue)))
+              })
+            .list_spreadsheets()
+          });
+        },
+
+        onResults: ({ matches }) =>
+          matches.map((el) => `<li class="form-control">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">${el.name}</div>
+                ${el.url}
+              </div>
+            </div>
+            </li>`).join(''),
+        onSubmit: ({ index, element, object, results }) => {
+          element.value=object.url
+          google.script.run
+            .store_spreadsheet_url(object.url)
+        },
+        onReset: () => disableConfigure(),
+      });
+      $("#spreadsheed_url").data("autocomplete-initialized", true);
+    }
+    document.getElementById('automate_export').addEventListener('show.bs.modal', function (event) {
+      initTriggerModal()
+    })
+  }
+
+  function initTriggerModal() {
+    google.script.run
+        .withSuccessHandler((properties)=>{
+          console.log(`got properties ${JSON.stringify(properties)}`)
+          $('#spreadsheed_url').val(properties['billings.spreadsheet.url'])
+          $('#export_hour').val(properties['billings.trigger.hour'])
+        })
+        .billings_properties()
+      google.script.run
+        .withSuccessHandler((trigger) => {
+          if(trigger.length>0) {
+            $('#remove_export_button').prop('disabled',false)
+          }else{
+            $('#remove_export_button').prop('disabled',true)
+          }
+        })
+        .existing_trigger()
+  }
+
+  function onSubmitConfigureExportTrigger() {
+    let export_hour=$('#export_hour').val()
+    configureExportStart()
+    google.script.run
+      .withSuccessHandler(() => {
+        initTriggerModal()
+        configureExportEnd()
+      })
+      .create_export_trigger(export_hour)
+  }
+
+  function onSubmitRemoveExportTrigger() {
+    google.script.run
+      .withSuccessHandler(() => initTriggerModal())
+      .remove_existing_triggers()
+    
+  }
+
+  function configureExportStart() {
+    $('#configure_export_button span').addClass('spinner-border')
+    $('#configure_export_button').prop("disabled",true);
+  }
+
+  function configureExportEnd() {
+    $('#configure_export_button span').removeClass('spinner-border')
+    $('#configure_export_button').prop("disabled",false);
+  }
+
+  function onBillingDateUpdated(from_date, to_date) {
+    console.log(`loading data from ${from_date} to ${to_date}...`)
+    $('#billing-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading')
+
+    google.script.run
+      .withFailureHandler(onFailureShowingBillings)
+      .withSuccessHandler(showBillings)
+      .billings_from_to(from_date.valueOf(), to_date.valueOf())
+  }
+
+  function onFailureShowingBillings(error) {
+    console.error(error)
+  } 
+
+  function showBillings(data) {
+    console.log(`show billings ${JSON.stringify(data)}...`)
+    $('#billing-table').bootstrapTable('destroy').bootstrapTable({}).bootstrapTable('showLoading').bootstrapTable('load', data).bootstrapTable('hideLoading')
+    exportEnd()
+  }
+
+  function onSubmitBillingExport() {
+    exportStart()
+    let selections = $('#billing-table').bootstrapTable('getSelections');
+    let spreadsheed_url=$('#spreadsheed_url').val()
+    if(selections && selections.length > 0) {
+      google.script.run
+        .withFailureHandler(onExportError)
+        .withSuccessHandler(onExportSuccess)
+        .export_billings(spreadsheed_url, selections);
+    } else {
+      exportEnd()
+      showAlert('info', 'Nothing selected', 'Select at least one row')
+    }  
+  }
+
+  function onExportError(response) {
+    exportEnd()
+    showAlert('error', 'Export Failed', response)
+    console.log(response)
+  }
+
+  function onExportSuccess(exported_bookings) {
+    let exported_message = exported_bookings.map(booking => `<li>${booking.date} ${booking.start_time} - ${booking.end_time} - ${booking.summary}</li>`)
+    showAlert('info', 'Export Successful', `<ul>${exported_message.join('')}</ul>`)
+    informDateSelection()
+  }
+
+  function exportStart() {
+    $('#export_button span').addClass('spinner-border')
+    $('#export_button').prop("disabled",true);
+  }
+
+  function exportEnd() {
+    $('#export_button span').removeClass('spinner-border')
+    $('#export_button').prop("disabled",false);
+  }
+
+</script>
