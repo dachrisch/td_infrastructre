@@ -91,6 +91,9 @@ function worklogTestRunner(_test) {
     check_object_matches(t, { issue_key: 'ACCBILLMON-2', billable: true, hour_factor: 1.125 }, worklog.fromEvent(new test_event(null, null, null, 'booking://ACCBILLMON-2?billable=true&amp;hourFactor=1.125\nthis should be ignored')).booking_info)
     check_object_matches(t, { issue_key: 'ACCBILLMON-2', billable: true, hour_factor: 1.125 }, worklog.fromEvent(new test_event(null, null, null, 'something before\nbooking://ACCBILLMON-2?billable=true&amp;hourFactor=1.125')).booking_info)
     check_object_matches(t, { issue_key: 'ACCBILLMON-2', billable: true, hour_factor: 1.125 }, worklog.fromEvent(new test_event(null, null, null, 'something before\nbooking://ACCBILLMON-2?billable=true&amp;hourFactor=1.125\nsomething after')).booking_info)
+    check_object_matches(t, { issue_key: 'ACCBILLMON-3', billable: false, hour_factor: 1 }, worklog.fromEvent(new test_event(null, null, null, 'booking://ACCBILLMON-3')).booking_info)
+    check_object_matches(t, { issue_key: 'ACCBILLMON-3', billable: false, hour_factor: 1 }, worklog.fromEvent(new test_event(null, null, null, '<html-blob>booking://ACCBILLMON-3<u></u></html-blob>')).booking_info)
+    check_object_matches(t, { issue_key: 'ACCBILLMON-3', billable: false, hour_factor: 1 }, worklog.fromEvent(new test_event(null, null, null, '<html-blob><u></u>Lukas&nbsp;</html-blob><br><html-blob>booking://ACCBILLMON-3<u></u><u></u><u></u></html-blob>')).booking_info)
   })
 
   test('worklog without billable info', function (t) {

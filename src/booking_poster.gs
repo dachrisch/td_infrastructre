@@ -1,5 +1,5 @@
-function book_workklogs_this_month() {
-  let unbooked = unbooked_billables(moment().startOf('month'), moment())
+function book_workklogs_last_30_days() {
+  let unbooked = unbooked_billables(moment().subtract(30, 'days'), moment())
   Logger.info(`booking ${unbooked.length} worklogs...`)
   book_selections(unbooked)
 }

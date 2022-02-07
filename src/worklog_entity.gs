@@ -27,7 +27,7 @@ class bookingInfo {
   static filterBookingLine(description) {
     let booking_line = ''
     if (description) {
-      booking_line = description.split('\n').filter(line => line.startsWith(this.BOOKING_PARAMS().protocol))[0]
+      booking_line = description.replace(/<br>/g,"\n").replace(/<\/?[^>]+(>|$)/g, "").split('\n').filter(line => line.startsWith(this.BOOKING_PARAMS().protocol))[0]
     }
     return booking_line
   }

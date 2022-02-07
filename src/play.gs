@@ -4,13 +4,13 @@ function play_deleteBookings() {
 }
 
 function play_getEvents() {
-
-  CalendarApp.getEvents(new Date(2021, 11, 9), new Date(2021, 11, 10)).forEach(event => {
+  console.log('<html-blob>booking://ACCBILLMON-2<u></u></html-blob>'.replace(/<\/?[^>]+(>|$)/g, ""))
+  CalendarApp.getEvents(new Date(2022, 1, 4), new Date(2022, 1, 5)).forEach(event => {
     let wl = worklog.fromEvent(event)
-    if (wl.booking_info.billable) {
+    
       console.log(event.getDescription())
-      console.log(worklog)
-    }
+      console.log(wl)
+    
   })
 
 }

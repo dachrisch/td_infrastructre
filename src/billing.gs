@@ -8,9 +8,11 @@ function list_spreadsheets() {
   }
   return spreadsheets
 }
+
 function existing_trigger() {
   return ScriptApp.getProjectTriggers().filter(trigger => trigger.getHandlerFunction() == export_billings_current_quarter.name)
 }
+
 function remove_existing_triggers() {
   UserProperties.deleteProperty('billings.trigger.hour')
   UserProperties.deleteProperty('billings.spreadsheet.url')
@@ -35,9 +37,9 @@ function export_billings_current_quarter() {
 
 function billings_properties() {
   return Object.fromEntries(
-   Object.entries(UserProperties.getProperties()).filter(
-      ([key, val])=>key.startsWith('billings.')
-   ))
+    Object.entries(UserProperties.getProperties()).filter(
+      ([key, val]) => key.startsWith('billings.')
+    ))
 }
 
 function store_trigger_hour(hour) {
