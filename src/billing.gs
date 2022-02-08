@@ -74,7 +74,7 @@ function billings_in_quarter(moment_in_quarter) {
 function billings_from_to(from_ts, to_ts) {
   let from_date = new Date(from_ts)
   let to_date = new Date(to_ts)
-  let worklogs = CalendarApp.getEvents(from_date, to_date).map(event => worklog.fromEvent(event).toJson())
+  let worklogs = getActiveCalendar().getEvents(from_date, to_date).map(event => worklog.fromEvent(event).toJson())
   let bookings = bookingsInRange(from_date, to_date)
   let worklogs_with_link = worklogs.map(worklog => withBookingInfo(worklog, bookings))
   return worklogs_with_link.filter(wl => wl.booking_info.booking_link != null)

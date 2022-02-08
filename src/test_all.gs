@@ -1,3 +1,20 @@
+
+function runAllTests() {
+  let logMessages = [];
+
+  const test = new GasTap({ logger: (msg) => logMessages.push(msg) })
+  for (const this_function in this) {
+    if (this[this_function] instanceof Function && this_function.endsWith('TestRunner')) {
+      console.log(`running test ${this_function}`)
+      this[this_function](test)
+    }
+  }
+
+  test.finish()
+  logMessages.forEach((msg) => console.log(msg))
+
+}
+
 function _check_keys(t, event_checks, worklog) {
   for (key in event_checks) {
     if (typeof event_checks[key] === 'object') {
@@ -16,20 +33,4 @@ function check_object_matches(t, event_checks, worklog, desc) {
   t.description = desc || old_desc
   _check_keys(t, event_checks, worklog)
   t.description = old_desc
-}
-
-function runAllTests() {
-  let logMessages = [];
-
-  const test = new GasTap({ logger: (msg) => logMessages.push(msg) })
-  for (const this_function in this) {
-    if (this[this_function] instanceof Function && this_function.endsWith('TestRunner')) {
-      console.log(`running test ${this_function}`)
-      this[this_function](test)
-    }
-  }
-
-  test.finish()
-  logMessages.forEach((msg) => console.log(msg))
-
 }

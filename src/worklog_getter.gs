@@ -10,7 +10,7 @@ class worklog_getter {
 
 class calendar_worklog_getter {
   getData(from_date, to_date) {
-    let worklogs = CalendarApp.getEvents(from_date, to_date).map(event => worklog.fromEvent(event))
+    let worklogs = getActiveCalendar().getEvents(from_date, to_date).map(event => worklog.fromEvent(event))
     console.info(`got ${worklogs.length} events in range [${from_date.toISOString()}, ${to_date.toISOString()}]`)
     return new worklogs_range(from_date, to_date, worklogs).toJson()
   }

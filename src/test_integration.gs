@@ -1,4 +1,5 @@
 function cleanup() {
+  UserProperties.deleteProperty('active_calendar')
   CalendarApp.getEvents(range_from, range_to).forEach(event => event.deleteEvent())
   bookingsInRange(range_from, range_to).forEach(booking => {
     deleteBooking(booking)
@@ -25,11 +26,12 @@ function testDefaultBilling(_test) {
 
   test('book event to default billing ticket', function (t) {
     let event = CalendarApp.createEvent('Test Event Nine to Five', new Date(1970, 5, 4, 9), new Date(1970, 5, 4, 17))
+    event.setDescription('booking://ACCBILLMON-2')
     let worklogs = getWorklogsAsJson(range_from.getTime(), range_to.getTime())
 
     check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "17:00", summary: "Test Event Nine to Five" }, worklogs[0])
 
-    let booked_selections = book_selections(worklogs, 'ACCBILLMON-2')
+    let booked_selections = book_selections(worklogs)
     t.equal(1, booked_selections.length, 'one item booked')
     t.equal(event.getTitle(), booked_selections[0].comment, 'matching summary')
 
@@ -57,7 +59,7 @@ function testBillingFromDescription(_test) {
 
     check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "17:00", summary: "Test Event Nine to Five", booking_info: { issue_key: "ACCBILLMON-3", billable: false, hour_factor: 1 } }, worklogs[0])
 
-    book_selections(worklogs, 'ACCBILLMON-2')
+    book_selections(worklogs)
     let bookings = bookingsInRange(range_from, range_to)
     t.equal(1, bookings.length, 'only one booking created')
     t.equal("ACCBILLMON-3", bookings[0].issue.key, 'correct billing ticket')

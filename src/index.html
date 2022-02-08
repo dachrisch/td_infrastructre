@@ -20,13 +20,21 @@
 
     <div id="action_menu">
       <div class="row">
-
-        <div class="input-daterange input-group" id="central-datepicker">
-          <span class="input-group-text">Daterange</span>
-          <input type="text" name="daterange" class="form-control"/>
-          <button id="date_reset_button" type="button" class="btn btn-primary" onclick="resetDateRange()">
-              Reset Range
-            </button>
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Active Calendar</span>
+            <select id="calendar_select" class="form-select" aria-label="Calendar">
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="input-daterange input-group" id="central-datepicker">
+            <span class="input-group-text">Daterange</span>
+            <input type="text" name="daterange" class="form-control"/>
+            <button id="date_reset_button" type="button" class="btn btn-primary" onclick="resetDateRange()">
+                Reset Range
+              </button>
+          </div>
         </div>
       </div>
 
@@ -90,6 +98,8 @@
       $('#action_menu').hide()
       connectTempo();
 
+      loadCalendars()
+
       addTabEvents()
 
       initDatepicker()
@@ -99,6 +109,20 @@
 
 
     });
+
+    function loadCalendars() {
+      google.script.run
+        .withSuccessHandler(cals => {
+          cals.forEach(cal => $('#calendar_select').append(new Option(cal.name, cal.id, false, cal.active)))
+        })
+        .loadCalendars()
+      $('#calendar_select').on('change', function(e){
+        console.log(`selecting calendar [${this.value}]`);
+        google.script.run
+          .withSuccessHandler(informDateSelection)
+          .setActiveCalendar(this.value)
+      });
+    }
 
     function initTooltips() {
       tippy('#configure-tab', {
