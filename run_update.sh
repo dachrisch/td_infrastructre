@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-source .env/bin/activate
+source .venv/bin/activate
 python update.py src
 deactivate
 
