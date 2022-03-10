@@ -42,13 +42,16 @@
   }
 
   function bookingLinkFormatter(value, row, index) {
-    let link=value
+    let row_content=value
     if(row.booking_info.booking_link) {
-      link=`<a href="https://jira.tdservice.cloud/secure/Tempo.jspa#/my-work/day?date=${moment(row.date,'DD.MM.YYYY').format('YYYY-MM-DD')}" target="_blank">${row.booking_info.booking_link}</a>`
+      let link=`<a href="https://jira.tdservice.cloud/secure/Tempo.jspa#/my-work/day?date=${moment(row.date,'DD.MM.YYYY').format('YYYY-MM-DD')} target="_blank">${row.booking_info.booking_link}</a>`
+
+      row_content=link
+    
     } else {
-      link='-'
+      row_content='-'
     }
-    return link
+    return row_content
   }
 
   function noBookingFilterCollector(value, row) {

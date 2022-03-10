@@ -33,6 +33,7 @@ function export_billings_current_quarter() {
 
   console.info(`exporting [${billings.length}] billings in quarter [${now.year()}/${now.quarter()}] to [${spreadsheet_url}]`)
   export_billings(spreadsheet_url, billings)
+  UrlFetchApp.fetch('https://cronitor.link/p/ce20477d5d4e46db988db0ff8cc196f0/td_booking?message=export')
 }
 
 function billings_properties() {
@@ -80,11 +81,14 @@ function billings_from_to(from_ts, to_ts) {
   return worklogs_with_link.filter(wl => wl.booking_info.booking_link != null)
 }
 
+/**
+ * @param {SpreadsheetApp.Sheet} tab
+ */
 function ensure_rows_available(tab, rows) {
   let rows_present = tab.getMaxRows()
   let rows_needed = rows.length
   if (rows_present < rows_needed) {
-    tab.insertRows(1, rows_needed - rows_present)
+    tab.insertRowsAfter(rows_present, rows_needed - rows_present)
   }
 }
 function empty_billing_tab(sheet_url, moment_in_quarter) {

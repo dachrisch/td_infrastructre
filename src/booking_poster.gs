@@ -1,16 +1,20 @@
 function book_workklogs_last_30_days() {
-  let unbooked = unbooked_billables(moment().subtract(30, 'days'), moment())
-  Logger.info(`booking ${unbooked.length} worklogs...`)
-  book_selections(unbooked)
+  loadCalendars().forEach((calendar) => {
+    Logger.info(`booking worklogs from [${calendar.name}]`)
+    let unbooked = unbooked_billables(CalendarApp.getCalendarById(calendar.id), moment().subtract(30, 'days'), moment())
+    Logger.info(`booking ${unbooked.length} worklogs...`)
+    book_selections(unbooked)
+    UrlFetchApp.fetch(`https://cronitor.link/p/ce20477d5d4e46db988db0ff8cc196f0/td_booking?message=booking&metric=count:${unbooked.length}`)
+  })
 }
 
-function unbooked_billables(from_ts, to_ts) {
+function unbooked_billables(calendar, from_ts, to_ts) {
   let from_date = new Date(from_ts)
   let to_date = new Date(to_ts)
-  let worklogs = getActiveCalendar().getEvents(from_date, to_date).map(event => worklog.fromEvent(event).toJson())
+  let worklogs = calendar.getEvents(from_date, to_date).map(event => worklog.fromEvent(event).toJson())
   let bookings = bookingsInRange(from_date, to_date)
   let worklogs_with_link = worklogs.map(worklog => withBookingInfo(worklog, bookings))
-  return worklogs_with_link.filter(wl => wl.booking_info.booking_link == null && wl.booking_info.billable)
+  return worklogs_with_link.filter(wl => wl.booking_info.booking_link == null && wl.booking_info.issue_key != null)
 }
 
 function book_selections(selections) {

@@ -17,7 +17,6 @@ function bookingsInRange(from_date, to_date) {
     ]
   }
   let bookings = post(endpoint, payload)
-  console.info(`got ${bookings.length} bookings in range [${from_date.toISOString()}, ${to_date.toISOString()}]`)
   return bookings
 }
 

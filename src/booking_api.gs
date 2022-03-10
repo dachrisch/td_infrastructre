@@ -63,13 +63,10 @@ function fetch(endpoint) {
 }
 
 function validated_fetch_json(endpoint, options) {
-  console.log(`fetching [${endpoint}, ${JSON.stringify(options)}]...`)
   let response = UrlFetchApp.fetch(endpoint, options)
   let response_code = response.getResponseCode()
-  console.log(`got response ${response_code}`)
   if (200 != response_code) { throw `error [${response_code}] while posting to ${endpoint}: ${response.getContentText()}` }
   let response_json = JSON.parse(response.getContentText())
-  console.log(`parsed response as json ${JSON.stringify(response_json)}`)
   return response_json
 }
 

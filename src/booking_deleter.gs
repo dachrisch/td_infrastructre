@@ -6,4 +6,5 @@ function deleteBookingsById(bookings) {
 function deleteBooking(booking) {
   let endpoint = 'https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/' + booking.originId
   delete_fetch(endpoint)
+  return booking
 }
