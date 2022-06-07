@@ -13,3 +13,11 @@ function getActiveCalendar() {
 
   return calendar || CalendarApp.getDefaultCalendar()
 }
+
+function getCalendarByName(name) {
+  return CalendarApp.getCalendarsByName(name)[0]
+}
+
+function test_cal() {
+  console.log(getCalendarByName('c.daehn@techdivision.com'))
+}

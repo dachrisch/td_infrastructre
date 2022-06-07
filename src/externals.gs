@@ -1,5 +1,6 @@
 if ((typeof moment) === 'undefined') {
   eval(UrlFetchApp.fetch('https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js').getContentText());
+  eval(UrlFetchApp.fetch('https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js').getContentText());
 }
 
 if ((typeof URI) === 'undefined') {

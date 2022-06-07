@@ -25,7 +25,8 @@ function testDefaultBilling(_test) {
   cleanup()
 
   test('book event to default billing ticket', function (t) {
-    let event = CalendarApp.createEvent('Test Event Nine to Five', new Date(1970, 5, 4, 9), new Date(1970, 5, 4, 17))
+    console.log(moment.tz('1970-06-04 09:00','Europe/Berlin').toDate())
+    let event = CalendarApp.createEvent('Test Event Nine to Five', moment.tz('1970-06-04 09:00','Europe/Berlin').toDate(), moment.tz('1970-06-04 17:00','Europe/Berlin').toDate())
     event.setDescription('booking://ACCBILLMON-2')
     let worklogs = getWorklogsAsJson(range_from.getTime(), range_to.getTime())
 

@@ -1,11 +1,16 @@
 function book_workklogs_last_30_days() {
+  let now = moment()
+  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=book_worklogs_${now}`)
   loadCalendars().forEach((calendar) => {
-    Logger.info(`booking worklogs from [${calendar.name}]`)
+    let pre_message = `booking worklogs from [${calendar.name}]`
+    Logger.info(pre_message)
     let unbooked = unbooked_billables(CalendarApp.getCalendarById(calendar.id), moment().subtract(30, 'days'), moment())
-    Logger.info(`booking ${unbooked.length} worklogs...`)
+    let post_message = `booking ${unbooked.length} worklogs...`
+    Logger.info(post_message)
     book_selections(unbooked)
-    UrlFetchApp.fetch(`https://cronitor.link/p/ce20477d5d4e46db988db0ff8cc196f0/td_booking?message=booking&metric=count:${unbooked.length}`)
+    UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?series=book_worklogs_${now}&metric=count:${unbooked.length}&message=${pre_message},${post_message}`)
   })
+  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=complete&series=book_worklogs_${now}`)
 }
 
 function unbooked_billables(calendar, from_ts, to_ts) {

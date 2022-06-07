@@ -29,11 +29,12 @@ function create_export_trigger(hour) {
 function export_billings_current_quarter() {
   let spreadsheet_url = get_spreadsheet_url()
   let now = moment()
-  let billings = billings_in_quarter(now)
-
-  console.info(`exporting [${billings.length}] billings in quarter [${now.year()}/${now.quarter()}] to [${spreadsheet_url}]`)
+  let billings = main_calendar_billings_in_quarter(now)
+  let message = `exporting [${billings.length}] billings in quarter [${now.year()}/${now.quarter()}] to [${spreadsheet_url}]`
+  console.info(message)
+  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=export_billings_${now}`)
   export_billings(spreadsheet_url, billings)
-  UrlFetchApp.fetch('https://cronitor.link/p/ce20477d5d4e46db988db0ff8cc196f0/td_booking?message=export')
+  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=complete&series=export_billings_${now}&metric=count:${billings.length}&message=${message}`)
 }
 
 function billings_properties() {
@@ -68,8 +69,13 @@ function export_billings(spreadsheet_url, billings) {
   return billings
 }
 
-function billings_in_quarter(moment_in_quarter) {
-  return billings_from_to(moment_in_quarter.clone().startOf('quarter'), moment_in_quarter.clone().endOf('quarter'))
+function main_calendar_billings_in_quarter(moment_in_quarter) {
+  let from_date = new Date(moment_in_quarter.clone().startOf('quarter'))
+  let to_date = new Date(moment_in_quarter.clone().endOf('quarter'))
+  let worklogs = getCalendarByName('c.daehn@techdivision.com').getEvents(from_date, to_date).map(event => worklog.fromEvent(event).toJson())
+  let bookings = bookingsInRange(from_date, to_date)
+  let worklogs_with_link = worklogs.map(worklog => withBookingInfo(worklog, bookings))
+  return worklogs_with_link.filter(wl => wl.booking_info.booking_link != null)
 }
 
 function billings_from_to(from_ts, to_ts) {
