@@ -1,9 +1,9 @@
 function test() {
-  console.log(assignedFor('galdobins'))
+  console.log(token())
 }
 
 function token() {
-  return 'OTA0NTk1NDMwNTcyOsHqkZpSVG+on5doMIYZBvAQj79U'
+  return SpreadsheetApp.openById('17wGtNMP8lAZ2SNT-KsTkzlRvoceZQl7CCfB0wi4KXl4').getRangeByName('allstars_jira_token').getValue()
 }
 
 /**
@@ -38,14 +38,14 @@ function totalAssignedFor(who, time = null) {
  * retrieves project query from active sheet by named range 'query_project'
  */
 function projectQuery() {
-  return SpreadsheetApp.getActiveSpreadsheet().getRangeByName('query_project').getValues().flat()[0]
+  return SpreadsheetApp.getActiveSpreadsheet().getRangeByName('query_project').getValue()
 }
 
 /**
  * retrieves wip query from active sheet by named range 'query_wip'
  */
 function wipQuery() {
-  return SpreadsheetApp.getActiveSpreadsheet().getRangeByName('query_wip').getValues().flat()[0]
+  return SpreadsheetApp.getActiveSpreadsheet().getRangeByName('query_wip').getValue()
 }
 
 /**
