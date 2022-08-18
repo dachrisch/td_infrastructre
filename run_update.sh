@@ -7,8 +7,7 @@ deactivate
 git --no-pager diff
 echo "What have you changed?"
 read -r message
-git add src/*.gs
-git add src/*.html
+git add worktime_logger/*
 git commit -a -m"$message"
 git push origin
 git push td_origin
