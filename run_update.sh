@@ -1,13 +1,22 @@
 #!/bin/zsh
 
+set -e
 source .venv/bin/activate
-python update.py 1MF4h8nX6nNGVrWVCvaaZ6lHM_3pj6cC_HqmcDB2eGq8_Yd_LhWUpAcMx worktime_logger
+jq -c '.[]' projects.json | while read i; do
+        # Do stuff here
+        project_id=$(echo "$i"|jq -r .projectId)
+        project_name=$(echo "$i"|jq -r .projectName)
+        echo "$project_name: $project_id"
+        python update.py $project_id $project_name
+done
 deactivate
-
 git --no-pager diff
 echo "What have you changed?"
 read -r message
-git add worktime_logger/*
+jq -c '.[]' projects.json | while read i; do
+    project_name=$(echo "$i"|jq -r .projectName)
+	git add "$project_name"/*
+done
 git commit -a -m"$message"
 git push origin
 git push td_origin
