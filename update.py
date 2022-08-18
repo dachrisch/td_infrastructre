@@ -87,12 +87,12 @@ class GoogleAppScriptProjectDownloader(object):
 
 def main(arguments_parser):
     arguments = arguments_parser.parse_args()
-    GoogleAppScriptProjectDownloader('Profile 1').download_project(
-        '1MF4h8nX6nNGVrWVCvaaZ6lHM_3pj6cC_HqmcDB2eGq8_Yd_LhWUpAcMx', arguments.directory)
+    GoogleAppScriptProjectDownloader('Profile 1').download_project(arguments.project_id, arguments.directory)
 
 
 if __name__ == '__main__':
     basicConfig(level=logging.INFO)
     parser = ArgumentParser()
+    parser.add_argument('project_id', help='id of project to download')
     parser.add_argument('directory', help='directory to updates sources', default=Path(os.getcwd()) / 'src')
     main(parser)
