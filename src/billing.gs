@@ -33,7 +33,9 @@ function export_billings_current_quarter() {
   let message = `exporting [${billings.length}] billings in quarter [${now.year()}/${now.quarter()}] to [${spreadsheet_url}]`
   console.info(message)
   UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=export_billings_${now}`)
-  export_billings(spreadsheet_url, billings)
+  if (billings.length > 0) {
+    export_billings(spreadsheet_url, billings)
+  }
   UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=complete&series=export_billings_${now}&metric=count:${billings.length}&message=${message}`)
 }
 
