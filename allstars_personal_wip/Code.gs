@@ -3,7 +3,7 @@ function test() {
 }
 
 function token() {
-  return SpreadsheetApp.openById('17wGtNMP8lAZ2SNT-KsTkzlRvoceZQl7CCfB0wi4KXl4').getRangeByName('allstars_jira_token').getValue()
+  return ScriptProperties.getProperty('allstars_jira_token')
 }
 
 /**
