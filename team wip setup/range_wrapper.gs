@@ -1,4 +1,3 @@
-
 class RangeWrapper {
   /**
    * @param {SpreadsheetApp.Range} range

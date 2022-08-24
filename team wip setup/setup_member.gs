@@ -1,4 +1,3 @@
-
 function memberCount() {
   return multiCellValues(member_ids()).length
 }

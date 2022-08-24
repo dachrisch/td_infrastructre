@@ -1,4 +1,3 @@
-
 function singleCellValue(cellId) {
   return SpreadsheetApp.getActiveSpreadsheet().getRange(cellId).getValue()
 }
