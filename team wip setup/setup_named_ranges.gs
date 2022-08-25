@@ -6,7 +6,3 @@ function teamFilterId() {
 function workingColumns() {
   return multiCellValues('working_columns')
 }
-
-function member_ids() {
-  return 'member_ids'
-}

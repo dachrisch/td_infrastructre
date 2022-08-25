@@ -16,7 +16,7 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   setValues(...values) {
-    console.log(`[${this.sheetWrapper.name}] - setting values at [${this.location()}] to [${values}]`)
+    logger.log(`[${this.sheetWrapper.name}] - setting values at [${this.location()}] to [${values}]`)
     if (values.every(item => Array.isArray(item))) {
       this.range.setValues(values)
     } else {
@@ -31,7 +31,7 @@ class RangeWrapper {
    */
   appendValues(values) {
     let appendRange = this.range.getSheet().getRange(this.range.getSheet().getLastRow() + 1, this.range.getColumn(), values.length, this.range.getNumColumns())
-    console.log(`[${this.sheetWrapper.name}] - appending to range [${appendRange.getA1Notation()}]: ${values}`)
+    logger.log(`[${this.sheetWrapper.name}] - appending to range [${appendRange.getA1Notation()}]: ${values}`)
     appendRange.setValues(values)
     return this
   }
@@ -41,7 +41,7 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   setHeader(...columnHeader) {
-    console.log(`[${this.sheetWrapper.name}] - setting [${this.location()}] as header`)
+    logger.log(`[${this.sheetWrapper.name}] - setting [${this.location()}] as header`)
     this.range.setTextStyle(headerStyle())
     return this.setValues(columnHeader)
   }
@@ -51,7 +51,7 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   setNamedRange(name) {
-    console.log(`[${this.sheetWrapper.name}] - setting named range [${name}] to [${this.range.getA1Notation()}]`)
+    logger.log(`[${this.sheetWrapper.name}] - setting named range [${name}] to [${this.range.getA1Notation()}]`)
     SpreadsheetApp.getActiveSpreadsheet().setNamedRange(name, this.range)
     return this
   }
@@ -61,7 +61,7 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   setFormula(formula) {
-    console.log(`[${this.sheetWrapper.name}] - setting [${this.location()}] to [${formula}]`)
+    logger.log(`[${this.sheetWrapper.name}] - setting [${this.location()}] to [${formula}]`)
     this.range.setFormula(formula)
     return this
   }
@@ -90,7 +90,7 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   withBackground(color) {
-    console.log(`[${this.sheetWrapper.name}] - setting background [${this.location()}] to [${color}]`)
+    logger.log(`[${this.sheetWrapper.name}] - setting background [${this.location()}] to [${color}]`)
     this.range.setBackground(color)
     return this
   }
@@ -100,13 +100,13 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   requireDate() {
-    console.log(`[${this.sheetWrapper.name}] - required [${this.location()}] to be a date`)
+    logger.log(`[${this.sheetWrapper.name}] - required [${this.location()}] to be a date`)
     this.range.setDataValidation(SpreadsheetApp.newDataValidation().requireDate().build())
     return this
   }
 
   requireHour() {
-    console.log(`[${this.sheetWrapper.name}] - required [${this.location()}] to be an hour (0 - 24)`)
+    logger.log(`[${this.sheetWrapper.name}] - required [${this.location()}] to be an hour (0 - 24)`)
     this.range.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList([...Array(24).keys()]).build())
     return this
   }

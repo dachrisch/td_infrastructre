@@ -59,7 +59,3 @@ function wipFor(who, time = null) {
     return TDJiraConnector.JQL(token(), `${projectQuery()} AND assignee = ${who} AND ${wipQuery()}`).length
   }
 }
-
-function test() {
-  console.log(wipQuery())
-}

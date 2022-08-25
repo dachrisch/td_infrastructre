@@ -1,10 +1,3 @@
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
-  // Or DocumentApp or FormApp.
-  ui.createMenu('Team WiP')
-    .addItem('Setup team WiP tracker...', 'createSetupMenu')
-    .addToUi();
-}
 
 class SheetSetup {
   constructor(name) {
@@ -12,7 +5,7 @@ class SheetSetup {
   }
 
   getSheet() {
-    console.log(`getting [${this.name}] sheet`)
+    logger.log(`getting [${this.name}] sheet`)
     return SheetWrapper.createOrGetSheet(this.name)
   }
 
@@ -23,9 +16,12 @@ class SheetSetup {
   remove() {
     SheetWrapper.getSheet(this.name).remove()
   }
+  toString() {
+    return `SheetSetup(${this.name})`
+  }
 }
 
-function setupTeamWiPTracker() {
+function setupTeamWiPTracker(clean = false) {
   sheets = [
     new MemberSheetSetup()
     , new SnapshotsSheetSetup()
@@ -38,10 +34,19 @@ function setupTeamWiPTracker() {
     , new AssignedChartSetup()
     , new WipChartSetup()
   ]
-
-  sheets.forEach(s => s.remove())
+  logger.info('starting setup...')
+  logger.log('removing all trigger')
+  ScriptApp.getScriptTriggers().forEach(t => ScriptApp.deleteTrigger(t))
+  if (clean) {
+    logger.info('removing all sheets')
+    sheets.forEach(s => s.remove())
+    SpreadsheetApp.flush()
+  }
+  sheets.forEach(s => {
+    logger.info(`setting up sheet [${s}]...`)
+    s.setup()
+  })
   SpreadsheetApp.flush()
-  sheets.forEach(s => s.setup())
-  SpreadsheetApp.flush()
+  logger.info('setup finished!')
 }
 

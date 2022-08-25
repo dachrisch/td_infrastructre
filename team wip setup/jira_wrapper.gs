@@ -7,7 +7,7 @@ function usernameLookup(username) {
   let profile_query = endpoint + '?username=' + encodeURIComponent(username)
   let response = UrlFetchApp.fetch(profile_query, { headers: { Authorization: "Bearer " + token() } })
   let json_response = JSON.parse(response.getContentText())
-  console.log(`fetching username for [${username}]: ${profile_query}...${json_response.displayName}`)
+  logger.log(`fetching username for [${username}]: ${profile_query}...${json_response.displayName}`)
   return json_response.displayName
 }
 

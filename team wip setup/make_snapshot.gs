@@ -2,7 +2,8 @@
    * function which is called by trigger to genrate snapshot
    */
   function makeTeamWiPSnapshot() {
-    SheetWrapper(SnapshotsProperties.sheetName).on('A:D').appendValues(mapSnapshotToValues(snapshotWip(multiCellValues(member_ids()))))
+    logger.log('creating team snapshot...')
+    SheetWrapper.getSheet(SnapshotsSheetSetup.name).on('A:D').appendValues(mapSnapshotToValues(snapshotWip(multiCellValues(MemberSheetSetup.named_range_ids))))
   }
 /**
  * @param {Array.<Object>} snapshots
