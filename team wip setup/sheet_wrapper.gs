@@ -79,4 +79,11 @@ class SheetWrapper {
   newChart(chartName) {
     return new ChartBuilderWrapper(this.sheet, chartName)
   }
+
+  toString() {
+    if (this.sheet) {
+      return `SheetWrapper(${this.name}, ${this.sheet.getSheetId()})`
+
+    } else { return `SheetWrapper(${this.name}, missing)` }
+  }
 }

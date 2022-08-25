@@ -1,6 +1,3 @@
-function setupCharts() {
-  new ChartsSheetSetup().setup()
-}
 class ChartsSheetSetup extends SheetSetup {
   constructor() {
     super('charts')

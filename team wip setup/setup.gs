@@ -1,4 +1,3 @@
-
 class SheetSetup {
   constructor(name) {
     this.name = name
@@ -21,32 +20,49 @@ class SheetSetup {
   }
 }
 
-function setupTeamWiPTracker(clean = false) {
-  sheets = [
-    new MemberSheetSetup()
-    , new SnapshotsSheetSetup()
-    , new CurrentDataSheetSetup()
-    , new ChartsSheetSetup()
-    , new TimelineSheetSetup()
-    , new TimelineAssignedSheetSetup()
-    , new TimelineWipSheetSetup()
-    , new CurrentChartSetup()
-    , new AssignedChartSetup()
-    , new WipChartSetup()
-  ]
-  logger.info('starting setup...')
-  logger.log('removing all trigger')
-  ScriptApp.getScriptTriggers().forEach(t => ScriptApp.deleteTrigger(t))
-  if (clean) {
-    logger.info('removing all sheets')
-    sheets.forEach(s => s.remove())
-    SpreadsheetApp.flush()
+var SetupService = class SetupService {
+  constructor(){
+
   }
-  sheets.forEach(s => {
-    logger.info(`setting up sheet [${s}]...`)
-    s.setup()
-  })
-  SpreadsheetApp.flush()
-  logger.info('setup finished!')
+  get allSheets() {
+    return [
+      new MemberSheetSetup()
+      , new SnapshotsSheetSetup()
+      , new CurrentDataSheetSetup()
+      , new ChartsSheetSetup()
+      , new TimelineSheetSetup()
+      , new TimelineAssignedSheetSetup()
+      , new TimelineWipSheetSetup()
+      , new CurrentChartSetup()
+      , new AssignedChartSetup()
+      , new WipChartSetup()
+    ]
+  }
+  cleanUp() {
+    logger.log('removing all trigger')
+    ScriptApp.getScriptTriggers().forEach(t => ScriptApp.deleteTrigger(t))
+    logger.info('removing all sheets')
+    this.allSheets.forEach(s => s.remove())
+    SpreadsheetApp.flush()
+    logger.info('cleanup finished!')
+  }
+
+  setupTeamWiPTracker(clean = false) {
+    logger.info('starting setup...')
+    if (clean) {
+      cleanUp()
+    } else {
+      logger.log('removing all trigger')
+      ScriptApp.getScriptTriggers().forEach(t => ScriptApp.deleteTrigger(t))
+    }
+    this.allSheets.forEach(s => {
+      logger.info(`setting up sheet [${s}]...`)
+      s.setup()
+    })
+    SpreadsheetApp.flush()
+    SpreadsheetApp.setActiveSheet(SpreadsheetApp.getActiveSpreadsheet().getSheetByName('setup'))
+    logger.info('setup finished!')
+  }
+
 }
 
