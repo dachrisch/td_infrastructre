@@ -1,15 +1,27 @@
 [
 
-    {"projectId":"1MF4h8nX6nNGVrWVCvaaZ6lHM_3pj6cC_HqmcDB2eGq8_Yd_LhWUpAcMx",
-    "projectName":"worktime_logger"},
+    {
+        "projectId": "1MF4h8nX6nNGVrWVCvaaZ6lHM_3pj6cC_HqmcDB2eGq8_Yd_LhWUpAcMx",
+        "projectName": "worktime_logger"
+    },
 
-    {"projectId":"1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
-    "projectName":"jira_connector"},
+    {
+        "projectId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
+        "projectName": "jira_connector"
+    },
 
-    {"projectId":"1g4Vbd9paOIfkr9SGyCCrMlRJaDWPYZpzIlt-IKmuyViJLUIL0AU1AC_0",
-     "projectName":"allstars_personal_wip"},
+    {
+        "projectId": "1g4Vbd9paOIfkr9SGyCCrMlRJaDWPYZpzIlt-IKmuyViJLUIL0AU1AC_0",
+        "projectName": "allstars_personal_wip"
+    },
 
-     {"projectId":"1OXrwMxGWaP29SYESviDpe9RESHcc1EqViY8e8j-DgGW0eyPYj1YSLDmK",
-     "projectName":"team wip setup"}
+    {
+        "projectId": "1OXrwMxGWaP29SYESviDpe9RESHcc1EqViY8e8j-DgGW0eyPYj1YSLDmK",
+        "projectName": "team wip tracker"
+    },
 
+    {
+        "projectId": "14-Rr27JyPBBfeYZcHLojDkdmyQfcZukOLK6cahoChHGYT_BRUaab8iKV",
+        "projectName": "Team WiP - Library Connector"
+    }
 ]
