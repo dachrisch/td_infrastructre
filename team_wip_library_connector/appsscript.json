@@ -1,0 +1,15 @@
+{
+  "timeZone": "Europe/Berlin",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "teamwiptracker",
+        "libraryId": "1OXrwMxGWaP29SYESviDpe9RESHcc1EqViY8e8j-DgGW0eyPYj1YSLDmK",
+        "version": "1",
+        "developmentMode": true
+      }
+    ]
+  }
+}
