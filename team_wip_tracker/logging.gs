@@ -28,4 +28,4 @@ class MultiLogger {
   }
 }
 
-var logger = new MultiLogger(new SheetLogger(SpreadsheetApp.getActiveSpreadsheet().getRange('F15')), console)
+var logger = new MultiLogger(new SheetLogger(SpreadsheetApp.getActiveSpreadsheet().getRange('setup!F15')), console)
