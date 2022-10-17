@@ -1,26 +1,13 @@
-function play_deleteBookings() {
-  bookingsInRange(new Date(2021, 11, 1), new Date(2021, 11, 31)).forEach(booking => deleteBooking(booking))
 
+function play_export_billings_last_quarter() {
+  let spreadsheet_url = get_spreadsheet_url()
+  let now = moment("01.09.2022","DD.MM.YYYY")
+  let billings = main_calendar_billings_in_quarter(now)
+  let message = `exporting [${billings.length}] billings in quarter [${now.year()}/${now.quarter()}] to [${spreadsheet_url}]`
+  console.info(message)
+  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=export_billings_${now}`)
+  if (billings.length > 0) {
+    export_billings(spreadsheet_url, billings)
+  }
+  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=complete&series=export_billings_${now}&metric=count:${billings.length}&message=${message}`)
 }
-
-function play_getEvents() {
-  console.log('<html-blob>booking://ACCBILLMON-2<u></u></html-blob>'.replace(/<\/?[^>]+(>|$)/g, ""))
-  CalendarApp.getEvents(new Date(2022, 1, 4), new Date(2022, 1, 5)).forEach(event => {
-    let wl = worklog.fromEvent(event)
-
-    console.log(event.getDescription())
-    console.log(wl)
-
-  })
-
-}
-
-function playSetDescription() {
-  let selections = configure_selections([{ "date": "03.01.2022", "calendar_id": "040000008200E00074C5B7101A82E00800000000E034066304E5D701000000000000000010000000184826ED40E3854BAA28CB29F46D8574", "end_time": "09:45", "booking_info": { "hour_factor": 1, "billable": false }, "start_time": "09:30", "state": true, "summary": "WG: Daily Coaching und Workshops" }], 'ACCBILLMON-2')
-  console.log(selections)
-}
-
-function play_calendar() {
-  CalendarApp.getAllOwnedCalendars().forEach(calendar => console.log(calendar.getName()))
-}
-

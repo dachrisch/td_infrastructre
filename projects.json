@@ -11,17 +11,15 @@
     },
 
     {
-        "projectId": "1g4Vbd9paOIfkr9SGyCCrMlRJaDWPYZpzIlt-IKmuyViJLUIL0AU1AC_0",
-        "projectName": "allstars_personal_wip"
-    },
-
-    {
         "projectId": "1OXrwMxGWaP29SYESviDpe9RESHcc1EqViY8e8j-DgGW0eyPYj1YSLDmK",
         "projectName": "team_wip_tracker"
     },
-
     {
         "projectId": "14-Rr27JyPBBfeYZcHLojDkdmyQfcZukOLK6cahoChHGYT_BRUaab8iKV",
         "projectName": "team_wip_library_connector"
+    },
+    {
+        "projectId": "1fFe0y-0iWKb_i8Jt_tZOaz3zejpQy3JgPZcKyGLKn9heQpVLpPUxt7vs",
+        "projectName": "spreadsheet_wrapper"
     }
 ]

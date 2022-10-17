@@ -60,7 +60,7 @@ function get_spreadsheet_url() {
 }
 
 function export_billings(spreadsheet_url, billings) {
-  let billings_tab = empty_billing_tab(spreadsheet_url, moment(billings[0].date))
+  let billings_tab = empty_billing_tab(spreadsheet_url, moment(billings[0].date, "DD.MM.YYYY"))
 
   let header_rows = [['Date', 'From', 'To', 'Description', 'Booking Factor', 'Duration', 'Booking Duration']]
   let all_rows = header_rows.concat(billings.map(wl => [wl.date, wl.start_time, wl.end_time, wl.summary, wl.booking_info.hour_factor, 0, 0]))

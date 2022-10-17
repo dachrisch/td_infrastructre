@@ -14,5 +14,9 @@ function bookingTestRunner(_test) {
     t.equal(new Date(2021, 11, 1, 10, 0).toJSON(), booking.toPayloadJson().started, 'tempo does not recognizes timezones')
   });
 
+  test('moment from date', function (t) {
+    t.equal(3, moment("01.07.2022", "DD.MM.YYYY").quarter(), 'quarter from date string is 3')
+  })
+
   _test || test.finish()
 }

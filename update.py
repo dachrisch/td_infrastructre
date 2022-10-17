@@ -63,8 +63,8 @@ class GoogleAppScriptProjectDownloader(object):
 
     def __init__(self, profile='Profile 1'):
         self.log = logging.getLogger(self.__class__.__name__).info
-        chrome_path = {'macOs' : '~/Library/Application Support/Google/Chrome',
-                       'Linux' : '~/.config/google-chrome'}
+        chrome_path = {'macOs': '~/Library/Application Support/Google/Chrome',
+                       'Linux': '~/.config/google-chrome'}
         self.cookies = browser_cookie3.chrome(domain_name='.google.com',
                                               cookie_file=expanduser(path.join(
                                                   chrome_path[platform.system()],
@@ -79,6 +79,7 @@ class GoogleAppScriptProjectDownloader(object):
             script_url = f'{GoogleAppScriptProjectDownloader.script_endpoint}?format=json&id={script_id}'
             self.log(f'downloading script from [{script_url}]...')
             scripts = s.get(script_url, cookies=self.cookies)
+            assert scripts.status_code == 200, scripts.status_code
             for script_file in map(lambda file: ScriptFactory.from_file(file), scripts.json()['files']):
                 self.log(f'updating file [{script_file.filename}] of type [{script_file.type}]...')
                 with open(directory_path / script_file.filename, 'w') as _fp:
@@ -87,7 +88,7 @@ class GoogleAppScriptProjectDownloader(object):
 
 def main(arguments_parser):
     arguments = arguments_parser.parse_args()
-    GoogleAppScriptProjectDownloader('Profile 1').download_project(arguments.project_id, arguments.directory)
+    GoogleAppScriptProjectDownloader('Profile 2').download_project(arguments.project_id, arguments.directory)
 
 
 if __name__ == '__main__':

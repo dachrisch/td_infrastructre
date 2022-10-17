@@ -9,6 +9,14 @@
         "serviceId": "calendar",
         "version": "v3"
       }
+    ],
+    "libraries": [
+      {
+        "userSymbol": "sw",
+        "version": "0",
+        "libraryId": "1fFe0y-0iWKb_i8Jt_tZOaz3zejpQy3JgPZcKyGLKn9heQpVLpPUxt7vs",
+        "developmentMode": true
+      }
     ]
   },
   "webapp": {
