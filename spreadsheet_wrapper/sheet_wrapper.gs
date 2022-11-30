@@ -1,5 +1,3 @@
-
-
 function headerStyle() {
   return SpreadsheetApp.newTextStyle().setBold(true).build()
 }

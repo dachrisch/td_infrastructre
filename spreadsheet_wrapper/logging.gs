@@ -1,4 +1,4 @@
-class SheetLogger {
+const SheetLogger = class SheetLogger {
   constructor(range) {
     this.range = range
   }
@@ -8,7 +8,7 @@ class SheetLogger {
   }
 }
 
-class MultiLogger {
+const MultiLogger = class MultiLogger {
   constructor(infoLogger, debugLogger) {
     this.infoLogger = infoLogger
     this.debugLogger = debugLogger
@@ -16,7 +16,6 @@ class MultiLogger {
 
   info(text) {
     this.infoLogger.log(text)
-    this.debugLogger.log(text)
   }
 
   debug(text) {

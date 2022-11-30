@@ -1,4 +1,4 @@
-class WhenConditionWrapper {
+const WhenConditionWrapper = class WhenConditionWrapper {
   constructor(sheetWrapper, rangeWrapper) {
     this.sheetWrapper = sheetWrapper
     this.rangeWrapper = rangeWrapper
@@ -16,7 +16,7 @@ class WhenConditionWrapper {
   }
 }
 
-class ThenConditionWrapper {
+const ThenConditionWrapper = class ThenConditionWrapper {
   constructor(sheetWrapper, rangeWrapper, rule) {
     this.sheetWrapper = sheetWrapper
     this.rangeWrapper = rangeWrapper

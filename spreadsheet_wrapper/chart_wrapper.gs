@@ -1,4 +1,4 @@
-class ChartBuilderWrapper {
+const ChartBuilderWrapper = class ChartBuilderWrapper {
   /**
    * @param {SpreadsheetApp.Sheet} sheet
    * @param {String} chartName

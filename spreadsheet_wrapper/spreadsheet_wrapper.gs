@@ -1,6 +1,7 @@
-var SpreadsheetWrapper=class SpreadsheetWrapper {
-  constructor(sheet) {
-    this.sheet = sheet
+var SpreadsheetWrapper = class SpreadsheetWrapper {
+  constructor(spreadsheet) {
+    this.spreadsheet = spreadsheet
+    SpreadsheetApp.setActiveSpreadsheet(spreadsheet)
   }
 
   static fromUrl(url) {
@@ -8,14 +9,26 @@ var SpreadsheetWrapper=class SpreadsheetWrapper {
   }
 
   getSheet(name) {
-    return new SheetWrapper(name, this.sheet.getSheetByName(name))
+    let sheet =  this.spreadsheet.getSheetByName(name)
+    logger.info(`getting sheet [${name}]: ${sheet}`)
+    return new SheetWrapper(name, sheet)
+  }
+
+  createOrGetSheet(name) {
+    let wrappedSheet = this.getSheet(name)
+    if (!wrappedSheet.exists()) {
+      let newSheet = this.spreadsheet.insertSheet(name)
+      logger.info(`creating sheet [${name}]: ${newSheet.getSheetId()}`)
+      wrappedSheet = new SheetWrapper(name, newSheet)
+    }
+    return wrappedSheet
   }
 
   singleCellValue(cellId) {
-    return this.sheet.getRange(cellId).getValue()
+    return this.spreadsheet.getRange(cellId).getValue()
   }
 
   multiCellValues(cellRange) {
-    return this.sheet.getRange(cellRange).getValues().flat().filter(emptyElementsFilter)
+    return this.spreadsheet.getRange(cellRange).getValues().flat().filter(emptyElementsFilter)
   }
 }

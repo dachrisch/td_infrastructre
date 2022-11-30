@@ -34,3 +34,7 @@ function check_object_matches(t, event_checks, worklog, desc) {
   _check_keys(t, event_checks, worklog)
   t.description = old_desc
 }
+
+function atest() {
+  console.log(auth_headers())
+}

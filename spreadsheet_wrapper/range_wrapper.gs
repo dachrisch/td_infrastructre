@@ -1,4 +1,4 @@
-class RangeWrapper {
+const RangeWrapper = class RangeWrapper {
   /**
    * @param {SpreadsheetApp.Range} range
    */
@@ -63,9 +63,13 @@ class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   setHeader(...columnHeader) {
+    this.asHeader()
+    return this.setValuesOneRow(...columnHeader)
+  }
+
+  asHeader() {
     logger.log(`[${this.sheetWrapper.name}] - setting [${this.location()}] as header`)
     this.range.setTextStyle(headerStyle())
-    return this.setValuesOneRow(...columnHeader)
   }
 
   /**
