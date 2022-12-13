@@ -14,18 +14,37 @@ const ApiConnector = class ApiConnector {
       muteHttpExceptions: true
     };
 
-    return this.validatedFetchJson(options)
+    return this.validatedFetch(this.endpoint, options)
+  }
+
+
+  fetchWithParams(params) {
+    let options = {
+      headers: this.authHeaders(),
+      method: 'get',
+      contentType: 'application/json;charset=UTF-8',
+      muteHttpExceptions: true
+    };
+
+    let queryEndpoint = this.endpoint.addQuery(params)
+    return this.validatedFetch(queryEndpoint, options)
   }
 
   fetch() {
-    return this.validatedFetchJson({ headers: this.authHeaders() })
+    return this.validatedFetch(this.endpoint, { headers: this.authHeaders() })
   }
 
-  validatedFetchJson(options) {
-    let response = UrlFetchApp.fetch(this.endpoint, options)
+  validatedFetch(endpoint, options) {
+    console.log(`about to fetch [${endpoint}] with ${JSON.stringify(options)}`)
+    let response = UrlFetchApp.fetch(endpoint, options)
+    return this.validate(response)
+  }
+
+  validate(response) {
     let responseCode = response.getResponseCode()
-    if (200 != responseCode) { throw `error [${responseCode}] while posting to ${this.endpoint}: ${response.getContentText()}` }
-    return JSON.parse(response.getContentText())
+    if (200 != responseCode) { throw `error [${responseCode}] fetching ${this.endpoint}: ${response.getContentText()}` }
+    let jsonResponse=JSON.parse(response.getContentText())
+    return jsonResponse
   }
 
   authHeaders() {

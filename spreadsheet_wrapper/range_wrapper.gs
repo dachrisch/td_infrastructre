@@ -38,8 +38,8 @@ const RangeWrapper = class RangeWrapper {
    * @return {RangeWrapper} this instance for chaining
    */
   setValues(...values) {
-    logger.log(`[${this.sheetWrapper.name}] - setting values at [${this.location()}] to [${values}]`)
     if (values.every(item => Array.isArray(item))) {
+      logger.log(`[${this.sheetWrapper.name}] - setting values at [${this.location()}] to [${values}]`)
       this.range.setValues(...values)
     } else {
       this.setValuesOneRow(values)
