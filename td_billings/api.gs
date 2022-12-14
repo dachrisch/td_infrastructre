@@ -1,8 +1,11 @@
 const ApiConnector = class ApiConnector {
+  /**
+   * @param {String} endpoint - Endpoint to an API
+   * @param {String} authToken - Personal access token
+   */
   constructor(endpoint, authToken) {
     this.endpoint = endpoint
     this.authToken = authToken
-    console.log(`${this}`)
   }
 
   post(json_payload) {
