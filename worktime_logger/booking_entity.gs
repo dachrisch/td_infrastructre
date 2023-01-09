@@ -30,7 +30,7 @@ class tempoBooking {
     // XXX: Tempo Api doesn't recognizes timezones
     // https://tempo-io.atlassian.net/wiki/spaces/KB/pages/232816644/Why+is+there+a+time+difference+between+my+Jira+worklog+and+my+Tempo+worklog
     let json_start_time = new Date(this.start_date.getTime() + 60 * 60000)
-    let duration = (this.booking_info.hour_factor * this.duration).toFixed()
+    let billingDuration = (this.booking_info.hour_factor * this.duration).toFixed()
     return {
       attributes: {
         _NotBillable_: {
@@ -39,12 +39,12 @@ class tempoBooking {
           value: !this.booking_info.billable
         }
       },
-      billableSeconds: this.booking_info.billable && duration || 0,
+      billableSeconds: this.booking_info.billable && billingDuration || 0,
       remainingEstimate: 0,
       worker: this.worker_key,
       comment: this.summary,
       started: json_start_time.toJSON(),
-      timeSpentSeconds: duration,
+      timeSpentSeconds: this.duration,
       originTaskId: this.booking_info.issue_id
     }
   }

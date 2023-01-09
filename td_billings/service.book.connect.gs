@@ -55,7 +55,7 @@ const BookingSheetConnector = class BookingSheetConnector {
   }
 
   updateFormulasInBookingRange() {
-    let range=this.fromNamedRange(this.bookingValuesNamedRange)
+    let range = this.fromNamedRange(this.bookingValuesNamedRange)
     range.getValues().forEach((row, index) => addFormulaRandomizer(range.getCell(index + 1, 2)))
   }
 
@@ -95,25 +95,26 @@ const BookingSheetConnector = class BookingSheetConnector {
 
 }
 
-function bookBillingsInMonth() {
-  let authToken=UserProperties.getProperty('tempo.token')
+function bookBillingsInMonth(userProperties) {
+  let tokenService = new TempoTokenService(userProperties)
   let sheetConnector = new BookingSheetConnector(SpreadsheetApp.getActiveSpreadsheet())
-  let bookingService = new BookingService(new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', authToken), OtherIdentityService.connect(authToken, sheetConnector.userEmail()))
+  let bookingService = new BookingService(new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', tokenService.getToken()), OtherIdentityService.connect(tokenService.getToken(), sheetConnector.userEmail()))
 
   sheetConnector.bookingValues().forEach((bookingValue) => bookingService.bookEntry(bookingValue, sheetConnector.bookingMonthMoment(), sheetConnector.bookingComment()))
 
   sheetConnector.updateFormulasInBookingRange()
 }
 
-function authenticate() {
+function authenticate(userProperties) {
+  let tokenService = new TempoTokenService(userProperties)
   var ui = SpreadsheetApp.getUi();
   var result = ui.prompt("Please enter tempo token");
   //Get the button that the user pressed.
   var button = result.getSelectedButton();
 
   if (button === ui.Button.OK) {
-    console.log(`storing tempo token: ${result.getResponseText()}`);
-    UserProperties.setProperty('tempo.token', result.getResponseText());
+    let tempoToken = result.getResponseText()
+    tokenService.store(tempoToken)
     new BookingSheetConnector(SpreadsheetApp.getActiveSpreadsheet()).updateFormulasInActiveSheet()
   } else if (button === ui.Button.CLOSE) {
     console.log('aborted')
