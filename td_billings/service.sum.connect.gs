@@ -23,7 +23,7 @@ const InvalidParameterError = class InvalidParameterError extends Error {
  * {String} dateInMonth - some date in month (DD.MM.YYYY)
  * @return {Number} - sum of hours of all tickets in given month
  */
-function hoursBilledInTicketMonth(userProperties, ticketUrl, userEmail, dateInMonth, tokenName = 'tempo.token') {
+function hoursBilledInTicketMonth(userProperties, ticketUrl, userEmail, dateInMonth) {
   let tempoToken = new TempoTokenService(userProperties).getToken()
   if (!tempoToken) {
     throw new InvalidParameterError('tempoToken', 'missing')

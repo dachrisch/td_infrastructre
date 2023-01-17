@@ -95,29 +95,26 @@ const BookingSheetConnector = class BookingSheetConnector {
 
 }
 
-function bookBillingsInMonth(userProperties) {
-  let tokenService = new TempoTokenService(userProperties)
+function bookBillingsInMonth() {
+  let token = authenticate()
   let sheetConnector = new BookingSheetConnector(SpreadsheetApp.getActiveSpreadsheet())
-  let bookingService = new BookingService(new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', tokenService.getToken()), OtherIdentityService.connect(tokenService.getToken(), sheetConnector.userEmail()))
+  let bookingService = new BookingService(new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', token), OtherIdentityService.connect(token, sheetConnector.userEmail()))
 
   sheetConnector.bookingValues().forEach((bookingValue) => bookingService.bookEntry(bookingValue, sheetConnector.bookingMonthMoment(), sheetConnector.bookingComment()))
 
   sheetConnector.updateFormulasInBookingRange()
 }
 
-function authenticate(userProperties) {
-  let tokenService = new TempoTokenService(userProperties)
+function authenticate() {
   var ui = SpreadsheetApp.getUi();
   var result = ui.prompt("Please enter tempo token");
-  //Get the button that the user pressed.
   var button = result.getSelectedButton();
 
   if (button === ui.Button.OK) {
     let tempoToken = result.getResponseText()
-    tokenService.store(tempoToken)
-    new BookingSheetConnector(SpreadsheetApp.getActiveSpreadsheet()).updateFormulasInActiveSheet()
+    return tempoToken
   } else if (button === ui.Button.CLOSE) {
-    console.log('aborted')
+    throw new Error('not authenticated')
   }
 }
 

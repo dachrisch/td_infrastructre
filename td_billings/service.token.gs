@@ -1,20 +1,20 @@
 const TempoTokenService = class TempoTokenService {
 
   /**
-   * @param {Properties} userProperties
+   * @param {Properties} properties
    */
-  constructor(userProperties) {
-    this.userProperties=userProperties
+  constructor(properties) {
+    this.properties = properties
     this.propertyName = 'tempo.token'
   }
 
   getToken() {
-    return this.userProperties.getProperty(this.propertyName)
+    return this.properties.getProperty(this.propertyName)
   }
 
   store(token) {
     console.log(`storing tempo token [${token}] in [${this.propertyName}]`);
-    this.userProperties.setProperty(this.propertyName, token);
+    this.properties.setProperty(this.propertyName, token);
   }
 }
 
