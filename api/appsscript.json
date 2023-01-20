@@ -1,6 +1,13 @@
 {
   "timeZone": "Europe/Berlin",
   "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "BBLog",
+        "version": "20",
+        "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt"
+      }
+    ]
   },
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8"
