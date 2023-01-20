@@ -3,7 +3,7 @@ Object.prototype.memberToString = function () {
 }
 
 function nikoNikoToCoworkingBoard() {
-  let boardService = MiroBoardService.connectTo('uXjVOSphBU0=', 'eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_FuN2wYAGNBGVSrhiOQDPBbVdG1U')
+  let boardService = MiroBoardService.connectTo('uXjVOSphBU0=', ScriptProperties.getProperty('miro.token'))
   let nikoFrame = boardService.getBoard().getFrame('3458764543483030808')
   log.info(`removing all stickies from ${nikoFrame}`)
   nikoFrame.getAllPostIts().forEach(item => item.remove())
