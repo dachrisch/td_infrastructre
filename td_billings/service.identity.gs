@@ -15,7 +15,7 @@ const IdentityService = class IdentityService {
 
 const MyIdentityService = class MyIdentityService extends IdentityService {
   static connect(authToken) {
-    return new MyIdentityService(new ApiConnector('https://jira.tdservice.cloud/rest/api/2/myself', authToken))
+    return new MyIdentityService(new api.ApiConnector('https://jira.tdservice.cloud/rest/api/2/myself', authToken))
   }
 
   workerKey() {
@@ -30,7 +30,7 @@ const OtherIdentityService = class OtherIdentityService extends IdentityService 
    * @param {String} userEmail - Email of user for which the identity should be used
    */
   static connect(authToken, userEmail) {
-    return new OtherIdentityService(new ApiConnector('https://jira.tdservice.cloud/rest/api/2/user/search', authToken), userEmail)
+    return new OtherIdentityService(new api.ApiConnector('https://jira.tdservice.cloud/rest/api/2/user/search', authToken), userEmail)
   }
 
   constructor(identityApiConnector, userEmail) {

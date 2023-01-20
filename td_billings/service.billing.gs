@@ -16,7 +16,7 @@ const BillingsService = class BillingsService {
 const AllCurrentUserBillingsService = class AllCurrentUserBillingsService extends BillingsService {
   static connect(authToken) {
     return new AllCurrentUserBillingsService(
-      new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/search', authToken),
+      new api.ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/search', authToken),
       MyIdentityService.connect(authToken))
   }
 
@@ -35,7 +35,7 @@ const AllCurrentUserBillingsService = class AllCurrentUserBillingsService extend
 const SingleTaskOtherUserBillingsService = class SingleTaskOtherUserBillingsService extends BillingsService {
   static connect(authToken, userEmail) {
     return new SingleTaskOtherUserBillingsService(
-      new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/search', authToken),
+      new api.ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/search', authToken),
       OtherIdentityService.connect(authToken, userEmail))
   }
 
