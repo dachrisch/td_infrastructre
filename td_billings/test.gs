@@ -17,3 +17,9 @@ function test2() {
   console.log(sumService.getTaskInMonth('TDACC-571', moment('2022-08-10', 'YYYY-MM-DD')).duration().as('hours'))
 
 }
+
+function test_bookValues() {
+    let sheetConnector = new BookingSheetConnector(SpreadsheetApp.openById('1xRLFaHKPNbmI7KM7p9qBROAqlyLngPJWMN5n0c41kbs')).updateFormulasInBookingRange()
+ 
+
+}

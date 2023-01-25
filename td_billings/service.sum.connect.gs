@@ -2,32 +2,14 @@ if ((typeof URI) === 'undefined') {
   eval(UrlFetchApp.fetch('https://rawgit.com/medialize/URI.js/gh-pages/src/URI.js').getContentText());
 }
 
-const InvalidParameterError = class InvalidParameterError extends Error {
-  /**
-   * @param {String} parameter - The name of the invalid parameter
-   * @param {String} reason - reason why the error was raised
-   */
-  constructor(parameter, reason) {
-    let message = `parameter [${parameter}] is ${reason}`
-    super(message)
-    this.reason = reason
-    this.parameter = parameter;
-    this.name = 'InvalidParameterError';
-  }
-}
-
 /**
- * {Properties} userProperties - User properties used to store token
- * {String} ticketUrl - ticket to retrieve bookings from (e.g.: https://jira.tdservice.cloud/browse/ABC-123)
- * {String} userEmail - Email of user to obtain bookings from
- * {String} dateInMonth - some date in month (DD.MM.YYYY)
+ * @param {String} ticketUrl - ticket to retrieve bookings from (e.g.: https://jira.tdservice.cloud/browse/ABC-123)
+ * @param {String} userEmail - Email of user to obtain bookings from
+ * @param {String} dateInMonth - some date in month (DD.MM.YYYY)
  * @return {Number} - sum of hours of all tickets in given month
  */
-function hoursBilledInTicketMonth(userProperties, ticketUrl, userEmail, dateInMonth) {
-  let tempoToken = new TempoTokenService(userProperties).getToken()
-  if (!tempoToken) {
-    throw new InvalidParameterError('tempoToken', 'missing')
-  }
+function hoursBilledInTicketMonth(ticketUrl, userEmail, dateInMonth) {
+  let tempoToken = new TempoTokenService().getToken()
   if (!ticketUrl) {
     throw new InvalidParameterError('ticketUrl', 'missing')
   }
@@ -47,37 +29,7 @@ function hoursBilledInTicketMonth(userProperties, ticketUrl, userEmail, dateInMo
       throw e
     }
   }
-  return SumServiceConnect.connect(tempoToken, userEmail).tasksDurationInMonth(taskKey, moment(dateInMonth, 'DD.MM.YYYY'))
-}
-
-const SumServiceConnect = class SumServiceConnect {
-  static connect(tempoToken, userEmail) {
-    let billingsService = SingleTaskOtherUserBillingsService.connect(tempoToken, userEmail)
-    let sumService = new SumBillingsService(billingsService)
-    return new SumServiceConnect(sumService)
-  }
-
-  /**
-   * {SumBillingsService} sumService
-   * {String} taskKey
-   * {moment} momentInMonth
-   */
-  constructor(sumService) {
-    this.sumService = sumService
-  }
-
-  /**
-   * @param {String} taskKey
-   * @param {moment} momentInMonth
-   * @return {Number}
-   */
-  tasksDurationInMonth(taskKey, momentInMonth) {
-    return this.sumService.getTaskInMonth(taskKey, momentInMonth).duration().as('hours')
-  }
-
-  toString() {
-    return `${this.constructor.name}(${this.memberToString()})`
-  }
+  return SummableBillingsService.connect(tempoToken, userEmail).getTasksInMonth(taskKey, moment(dateInMonth, 'DD.MM.YYYY')).duration().as('hours')
 }
 
 function test_SumServiceConnect(_test) {
@@ -90,7 +42,7 @@ function test_SumServiceConnect(_test) {
 
   test('all parameter missing', function (t) {
     try {
-      hoursBilledInTicketMonth(userProperties, undefined, undefined, undefined, 'test.token')
+      hoursBilledInTicketMonth(undefined, undefined, undefined, 'test.token')
       t.fail('expected exception')
     } catch (e) {
       if ('parameter' in e) {
@@ -103,7 +55,7 @@ function test_SumServiceConnect(_test) {
 
   test('ticketUrl parameter missing', function (t) {
     try {
-      hoursBilledInTicketMonth(userProperties, undefined, 'valid', 'valid', 'test.token')
+      hoursBilledInTicketMonth(undefined, 'valid', 'valid', 'test.token')
       t.fail('expected exception')
     } catch (e) {
       if ('parameter' in e) {
@@ -115,7 +67,7 @@ function test_SumServiceConnect(_test) {
 
   test('userEmail parameter missing', function (t) {
     try {
-      hoursBilledInTicketMonth(userProperties, 'valid', undefined, 'valid', 'test.token')
+      hoursBilledInTicketMonth('valid', undefined, 'valid', 'test.token')
       t.fail('expected exception')
     } catch (e) {
       if ('parameter' in e) {
@@ -125,7 +77,7 @@ function test_SumServiceConnect(_test) {
     }
 
     try {
-      hoursBilledInTicketMonth(userProperties, 'valid', '', 'valid', 'test.token')
+      hoursBilledInTicketMonth('valid', '', 'valid', 'test.token')
       t.fail('expected exception')
     } catch (e) {
       if ('parameter' in e) {
@@ -139,7 +91,7 @@ function test_SumServiceConnect(_test) {
 
   test('dateInMonth parameter missing', function (t) {
     try {
-      hoursBilledInTicketMonth(userProperties, 'valid', 'valid', undefined, 'test.token')
+      hoursBilledInTicketMonth('valid', 'valid', undefined, 'test.token')
       t.fail('expected exception')
     } catch (e) {
       if ('parameter' in e) {
@@ -151,7 +103,7 @@ function test_SumServiceConnect(_test) {
 
   test('ticketUrl parameter valid', function (t) {
     try {
-      hoursBilledInTicketMonth(userProperties, 1, 'valid', 'valid', 'test.token')
+      hoursBilledInTicketMonth(1, 'valid', 'valid', 'test.token')
       t.fail('expected exception')
     } catch (e) {
       if ('parameter' in e) {
@@ -170,7 +122,7 @@ function test_SumServiceConnect(_test) {
         }
       }
     }
-    t.equal(2, hoursBilledInTicketMonth(userProperties, 'billing-key', 'valid', 'valid', 'test.token'))
+    t.equal(2, hoursBilledInTicketMonth('billing-key', 'valid', 'valid', 'test.token'))
   })
 
   test.finish()

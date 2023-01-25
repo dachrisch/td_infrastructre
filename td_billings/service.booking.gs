@@ -1,52 +1,3 @@
-const BookingEntry = class BookingEntry {
-  /**
-   * @param {String} workeyKey
-   * @param {moment} startedDate
-   * @param {String} ticketKey
-   * @apram {String} comment
-   */
-  constructor(workerKey, startedMoment, ticketKey, hoursToBook, comment) {
-    this.timeSpentSeconds = hoursToBook * 60 * 60
-    this.attributes = {
-      _NotBillable_: {
-        name: "Not Billable",
-        workAttributeId: 2,
-        value: false
-      }
-    }
-    this.billableSeconds = 0
-    this.worker = workerKey
-    this.comment = comment
-    this.started = startedMoment.format('YYYY-MM-DD HH:mm:ss.SSS')
-    this.originTaskId = ticketKey
-  }
-
-  toString() {
-    return `${this.constructor.name}(${this.memberToString()})`
-  }
-
-}
-
-const BookedEntry = class BookedEntry {
-  static fromJson(jsonValues) {
-    return new BookedEntry(jsonValues.tempoWorklogId, jsonValues.worker, jsonValues.started, jsonValues.issue.key, jsonValues.timeSpentSeconds / (60 * 60), jsonValues.comment)
-  }
-
-  constructor(entryId, workerKey, startedDate, ticketKey, bookedHours, comment) {
-    this.entryId=entryId
-    this.workerKey = workerKey
-    this.startedDate = startedDate
-    this.ticketKey = ticketKey
-    this.bookedHours = bookedHours
-    this.comment=comment
-  }
-
-  toString() {
-    return `${this.constructor.name}(${this.memberToString()})`
-  }
-
-}
-
 const BookingService = class BookingService {
   /**
    * @param {ApiConnector} tempoApiConnector
@@ -63,12 +14,10 @@ const BookingService = class BookingService {
 
   /**
    * @param {BookingValue} bookingValue
-   * @param {moment} bookingMoment
-   * @param {String} bookingComment
    */
-  bookEntry(bookingValue, bookingMoment, bookingComment) {
-    let bookingEntry = new BookingEntry(this.identityService.workerKey(), bookingMoment, bookingValue.ticketKey(), bookingValue.hoursToBook, bookingComment)
-    console.log(`booking ${bookingValue} as ${bookingEntry}`)
+  bookEntry(bookingValue) {
+    let bookingEntry = bookingValue.toEntry(this.identityService.workerKey())
+    log.info(`booking ${bookingEntry}`)
     let bookedEntry = BookedEntry.fromJson(this.tempoApiConnector.post(bookingEntry)[0])
     console.log(`booked entry ${bookedEntry}`)
     return bookedEntry
@@ -84,7 +33,7 @@ function test_BookingService(_test) {
   test('book entry', function (t) {
     let worker = 'worker-A'
     let momentToBook = moment('02.09.2022', 'DD.MM.YYYY')
-    let summary='this is a test booking'
+    let summary = 'this is a test booking'
     let bookingService = new BookingService(new class A {
       post(bookingEntry) {
         return [{

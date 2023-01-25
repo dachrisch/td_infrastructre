@@ -15,6 +15,11 @@
         "version": "0",
         "libraryId": "1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-",
         "developmentMode": true
+      },
+      {
+        "userSymbol": "BBLog",
+        "version": "20",
+        "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt"
       }
     ]
   }
