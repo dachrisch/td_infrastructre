@@ -98,7 +98,7 @@ const BookingSheetConnector = class BookingSheetConnector {
 function bookBillingsInMonth() {
   let token = authenticate()
   let sheetConnector = new BookingSheetConnector(SpreadsheetApp.getActiveSpreadsheet())
-  let bookingService = new BookingService(new ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', token), OtherIdentityService.connect(token, sheetConnector.userEmail()))
+  let bookingService = new BookingService(new api.ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', token), OtherIdentityService.connect(token, sheetConnector.userEmail()))
 
   sheetConnector.bookingValues().forEach((bookingValue) => bookingService.bookEntry(bookingValue, sheetConnector.bookingMonthMoment(), sheetConnector.bookingComment()))
 
