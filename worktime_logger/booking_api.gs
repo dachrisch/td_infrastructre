@@ -23,12 +23,16 @@ const worker = _.memoize(function () {
   return fetch('https://jira.tdservice.cloud/rest/api/2/myself')
 })
 
-const issueId = _.memoize(function (issueKey) {
+
+const fetchIssue = _.memoize(function (issueKey) {
   let endpoint = 'https://jira.tdservice.cloud/rest/api/2/issue/' + issueKey
   let issue = fetch(endpoint)
-  return issue['id']
+  return issue
 })
 
+const issueId = function(issueKey){return fetchIssue(issueKey)['id']}
+
+const issueAccount = function(issueKey){return fetchIssue(issueKey)['fields']['customfield_11400']}
 
 function delete_fetch(endpoint) {
   let options = {

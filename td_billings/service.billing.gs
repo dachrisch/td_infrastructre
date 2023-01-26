@@ -2,6 +2,7 @@ const BillingsService = class BillingsService {
   constructor(tempoApiConnector, identityService) {
     this.tempoApiConnector = tempoApiConnector
     this.identityService = identityService
+    log.finer(`connecting ${this}`)
   }
 
   toString() {

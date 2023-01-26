@@ -6,19 +6,25 @@ const IdentityService = class IdentityService {
     this.identityApiConnector = identityApiConnector
   }
 
-  workerKey() { }
+  _workerKey() { }
 
   toString() {
     return `${this.constructor.name}(${this.memberToString()})`
   }
 }
 
+importUnderscore()
+
+IdentityService.prototype.workerKey = _.memoize(function() {
+  return this._workerKey()
+})
+
 const MyIdentityService = class MyIdentityService extends IdentityService {
   static connect(authToken) {
     return new MyIdentityService(new api.ApiConnector('https://jira.tdservice.cloud/rest/api/2/myself', authToken))
   }
 
-  workerKey() {
+  _workerKey() {
     return this.identityApiConnector.fetch().key
   }
 
@@ -38,7 +44,7 @@ const OtherIdentityService = class OtherIdentityService extends IdentityService 
     this.userEmail = userEmail
   }
 
-  workerKey() {
+  _workerKey() {
     return this.identityApiConnector.fetchWithParams({ username: this.userEmail })[0].key
   }
 

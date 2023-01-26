@@ -31,7 +31,7 @@ class tempoBooking {
     // https://tempo-io.atlassian.net/wiki/spaces/KB/pages/232816644/Why+is+there+a+time+difference+between+my+Jira+worklog+and+my+Tempo+worklog
     let json_start_time = new Date(this.start_date.getTime() + 60 * 60000)
     let billingDuration = (this.booking_info.hour_factor * this.duration).toFixed()
-    return {
+    let payload = {
       attributes: {
         _NotBillable_: {
           name: "Not Billable",
@@ -47,6 +47,16 @@ class tempoBooking {
       timeSpentSeconds: this.duration,
       originTaskId: this.booking_info.issue_id
     }
+
+    if(this.booking_info.account_name) {
+      payload.attributes._Account_ = {
+        name:"Account",
+        workAttributeId:7,
+        value:this.booking_info.account_name
+      }
+    }
+
+    return payload
   }
 }
 

@@ -29,3 +29,8 @@ function play_remove_friday_events() {
     f.deleteEvent()
     })
 }
+
+function play_getAccount() {
+  console.log(issueId('ACCBILLMON-1'))
+  console.log(issueAccount('ACCBILLMON-1'))
+}

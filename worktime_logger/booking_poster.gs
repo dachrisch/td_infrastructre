@@ -27,6 +27,10 @@ function book_selections(selections) {
   return selections.map(selection => {
     let booking = tempoBooking.fromElement(selection)
     booking.booking_info.issue_id = issueId(booking.booking_info.issue_key)
+    let account = issueAccount(booking.booking_info.issue_key)
+    if (account) {
+      booking.booking_info.account_name = issueAccount(booking.booking_info.issue_key)['key']
+    }
     booking.worker_key = worker_key
     return book(booking)
   })

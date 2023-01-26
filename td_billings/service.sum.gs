@@ -10,6 +10,9 @@ const SummableBillings = class SummableBillings {
    * @return {number} - sum of duration of all billungs
    */
   duration() {
+    log.fine(`summing up ${this.billings.length} billings`)
+    this.billings.forEach(b=>log.finer(b.toString()))
+
     return this.billings.reduce((sum, billing) => sum.add(billing.duration()), moment.duration())
   }
 
@@ -25,6 +28,7 @@ const SumBillingsService = class SumBillingsService {
    */
   constructor(billingsService) {
     this.billingsService = billingsService
+    log.finer(this.toString())
   }
 
   /**
@@ -33,6 +37,7 @@ const SumBillingsService = class SumBillingsService {
    * @return {SummableBillings} 
    */
   getTaskInMonth(taskKey, momentInMonth) {
+    log.fine(`getting tasks for [${taskKey}] in [${momentInMonth}]`)
     return new SummableBillings(this.billingsService.getInRangeForTask(momentInMonth.clone().startOf('month'), momentInMonth.clone().endOf('month'), taskKey))
   }
 

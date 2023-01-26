@@ -3,6 +3,7 @@ const BookingSheetConnector = class BookingSheetConnector {
     this.spreadsheet = spreadsheet
     this.bookingValuesNamedRange = 'booking.range'
     this.emailNamedRange = 'booking.email'
+    log.fine(`connecting to ${this}`)
   }
 
   bookingValues() {
@@ -10,6 +11,7 @@ const BookingSheetConnector = class BookingSheetConnector {
   }
 
   updateFormulasInBookingRange() {
+    log.info(`updating formulae in ${this.bookingValuesNamedRange}`)
     let range = this.fromNamedRange(this.bookingValuesNamedRange)
     range.getValues().forEach((row, index) => addFormulaRandomizer(range.getCell(index + 1, 4)))
   }
@@ -27,7 +29,13 @@ const BookingSheetConnector = class BookingSheetConnector {
     if (!namedRange) {
       throw new InvalidParameterError(rangeName, 'not found')
     }
+    log.finer(`${rangeName} is ${namedRange.getA1Notation()}`)
     return namedRange
+  }
+
+
+  toString() {
+    return `${this.constructor.name}(${this.memberToString()})`
   }
 
 }
