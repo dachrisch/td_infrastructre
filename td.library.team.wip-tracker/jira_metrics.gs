@@ -1,19 +1,11 @@
 /**
- * filter to enable custom functions to act on ranges (i.e. ARRAYFORMULAS), which contain empty values
- * @param {(String|Array.<String>)} n - Elements to filter
- */
-function emptyElementsFilter(n) {
-  return n != null && n != [''] && n != ''
-}
-
-/**
  * @param {(String|Array.<String>)} who - jira ids or list of ids
  * @param {Date} time - Just used to refresh when called from GSheet
  * @return {Array} Keys assigned to {who} globally
  */
 function totalAssignedFor(who, time = null) {
   if (who.map) {
-    return who.filter(emptyElementsFilter).map(totalAssignedFor)
+    return who.filter(sw.emptyElementsFilter).map(totalAssignedFor)
   } else {
     return TDJiraConnector.JQL(token(), `assignee = ${who}`).length
   }
@@ -41,7 +33,7 @@ function wipQuery() {
  */
 function assignedFor(who, time = null) {
   if (who.map) {
-    return who.filter(emptyElementsFilter).map(assignedFor)
+    return who.filter(sw.emptyElementsFilter).map(assignedFor)
   } else {
     return TDJiraConnector.JQL(token(), `${projectQuery()} AND assignee = ${who}`).length
   }
@@ -54,7 +46,7 @@ function assignedFor(who, time = null) {
  */
 function wipFor(who, time = null) {
   if (who.map) {
-    return who.filter(emptyElementsFilter).map(wipFor)
+    return who.filter(sw.emptyElementsFilter).map(wipFor)
   } else {
     return TDJiraConnector.JQL(token(), `${projectQuery()} AND assignee = ${who} AND ${wipQuery()}`).length
   }

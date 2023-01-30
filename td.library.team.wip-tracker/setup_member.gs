@@ -16,6 +16,6 @@ class MemberSheetSetup extends SheetSetup {
   }
 
   get memberCount() {
-    return multiCellValues(MemberSheetSetup.named_range_setup_ids).length
+    return this.sheetWrapper.multiCellValues(MemberSheetSetup.named_range_setup_ids).length
   }
 }

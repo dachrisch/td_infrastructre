@@ -7,7 +7,7 @@ class TimelineSheetSetup extends SheetSetup {
     super(TimelineSheetSetup.name)
   }
   setup() {
-    let numMember = multiCellValues(MemberSheetSetup.named_range_ids).length
+    let numMember = this.sheetWrapper.multiCellValues(MemberSheetSetup.named_range_ids).length
     if (numMember > 12) {
       throw 'can not handle more than 12 member'
     }

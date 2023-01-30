@@ -14,7 +14,7 @@ function usernameLookup(username) {
 
 function firstName(username) {
   if (username.map) {
-    return username.filter(emptyElementsFilter).map(firstName)
+    return username.filter(sw.emptyElementsFilter).map(firstName)
   } else {
     return usernameLookup(username).split(' ')[0]
   }

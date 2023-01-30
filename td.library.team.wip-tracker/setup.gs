@@ -1,11 +1,12 @@
 class SheetSetup {
   constructor(name) {
     this.name = name
+    this.sheetWrapper = sw.SpreadsheetWrapper.fromActive()
   }
 
   getSheet() {
     logger.log(`getting [${this.name}] sheet`)
-    return SheetWrapper.createOrGetSheet(this.name)
+    return this.sheetWrapper.createOrGetSheet(this.name)
   }
 
   setup() {
@@ -13,7 +14,7 @@ class SheetSetup {
   }
 
   remove() {
-    SheetWrapper.getSheet(this.name).remove()
+    this.sheetWrapper.getSheet(this.name).remove()
   }
   toString() {
     return `SheetSetup(${this.name})`
@@ -50,7 +51,7 @@ var SetupService = class SetupService {
   setupTeamWiPTracker(clean = false) {
     logger.info('starting setup...')
     if (clean) {
-      cleanUp()
+      this.cleanUp()
     } else {
       logger.log('removing all trigger')
       ScriptApp.getScriptTriggers().forEach(t => ScriptApp.deleteTrigger(t))

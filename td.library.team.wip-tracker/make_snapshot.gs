@@ -1,10 +1,11 @@
 var SnapshotMaker = class SnapshotMaker {
   constructor() {
     this.sheetName = SnapshotsSheetSetup.name
+    this.sheetWrapper = sw.SpreadsheetWrapper.fromActive()
   }
 
   get sheet() {
-    return SheetWrapper.getSheet(this.sheetName)
+    return this.sheetWrapper.getSheet(this.sheetName)
   }
 
   perform() {
@@ -18,7 +19,7 @@ var SnapshotMaker = class SnapshotMaker {
    * @return {Object} - Object containing {'name' : {'assigned' : <num>, 'wip' : <num>}}
    */
   snapshotTeam() {
-    let jiraIds = multiCellValues(MemberSheetSetup.named_range_ids)
+    let jiraIds = this.sheetWrapper.multiCellValues(MemberSheetSetup.named_range_ids)
     return jiraIds.reduce((obj, jiraId) => Object.assign(obj, { [jiraId]: { assigned: assignedFor(jiraId), wip: wipFor(jiraId) } }), {});
   }
 }
@@ -31,3 +32,6 @@ function mapSnapshotToValues(snapshots) {
   return Object.keys(snapshots).map((name) => [snapshotTime, name, snapshots[name].assigned, snapshots[name].wip])
 }
 
+function test_makeSnapshot() {
+  new SnapshotMaker().perform()
+}

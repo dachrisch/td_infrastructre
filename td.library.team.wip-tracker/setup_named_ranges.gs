@@ -1,8 +1,8 @@
 function teamFilterId() {
-  return singleCellValue('team_filter_id')
+  return sw.SpreadsheetWrapper.fromActive().singleCellValue('team_filter_id')
 }
 
 
 function workingColumns() {
-  return multiCellValues('working_columns')
+  return sw.SpreadsheetWrapper.fromActive().multiCellValues('working_columns')
 }

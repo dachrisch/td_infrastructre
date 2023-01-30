@@ -2,7 +2,7 @@ function headerStyle() {
   return SpreadsheetApp.newTextStyle().setBold(true).build()
 }
 
-const SheetWrapper = class SheetWrapper {
+var SheetWrapper = class SheetWrapper {
   /**
    * @param {String} name
    * @param {SpreadsheetApp.Sheet} sheet

@@ -24,7 +24,6 @@ function JQL(token, query, keys = 'key') {
   let json_response = JSON.parse(response.getContentText())
 
   let issue_keys = json_response.issues.map(issue => keys.split(',').map(key => _.get(issue, key.trim())))
-  console.log(`fetch(${jql_query}): ${issue_keys}`)
   return issue_keys
 }
 

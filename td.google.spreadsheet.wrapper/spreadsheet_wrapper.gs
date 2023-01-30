@@ -8,6 +8,10 @@ var SpreadsheetWrapper = class SpreadsheetWrapper {
     return new SpreadsheetWrapper(SpreadsheetApp.openByUrl(url))
   }
 
+  static fromActive() {
+    return new SpreadsheetWrapper(SpreadsheetApp.getActiveSpreadsheet())
+  }
+
   getSheet(name) {
     let sheet =  this.spreadsheet.getSheetByName(name)
     logger.info(`getting sheet [${name}]: ${sheet}`)
@@ -31,4 +35,12 @@ var SpreadsheetWrapper = class SpreadsheetWrapper {
   multiCellValues(cellRange) {
     return this.spreadsheet.getRange(cellRange).getValues().flat().filter(emptyElementsFilter)
   }
+}
+
+/**
+ * filter to enable custom functions to act on ranges (i.e. ARRAYFORMULAS), which contain empty values
+ * @param {(String|Array.<String>)} n - Elements to filter
+ */
+function emptyElementsFilter(n) {
+  return n != null && n != [''] && n != ''
 }
