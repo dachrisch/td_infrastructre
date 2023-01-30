@@ -62,7 +62,7 @@ var ApiConnector = class ApiConnector {
   }
 
   validate(response, expectedResponseCode) {
-    log.finest(`validating response [${response}]`)
+    log.finest(`validating response ${response}`)
     let responseCode = response.getResponseCode()
     if (expectedResponseCode != responseCode) { throw `error [${responseCode}] fetching ${this.endpoint}: ${response.getContentText()}` }
     let jsonResponse = JSON.parse(response.getContentText())

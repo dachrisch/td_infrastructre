@@ -1,27 +1,19 @@
-const BookingSheetConnector = class BookingSheetConnector {
-  constructor(spreadsheet) {
-    this.spreadsheet = spreadsheet
-    this.bookingValuesNamedRange = 'booking.range'
-    this.emailNamedRange = 'booking.email'
-    log.fine(`connecting to ${this}`)
+const NamedRangeRetriever = class NamedRangeRetriever {
+  constructor(spreadsheet, rangeName) {
+    this.spreadsheet=spreadsheet
+    this.rangeName = rangeName
   }
 
-  bookingValues() {
-    return this.fromNamedRange(this.bookingValuesNamedRange).getValues().map((row) => BookingValue.fromRange(row)).filter((bookingValue) => (bookingValue.shouldBook == true) && bookingValue.hoursToBook > 0.01)
+  values() {
+    return this.range().getValues()
   }
 
-  updateFormulasInBookingRange() {
-    log.info(`updating formulae in ${this.bookingValuesNamedRange}`)
-    let range = this.fromNamedRange(this.bookingValuesNamedRange)
-    range.getValues().forEach((row, index) => addFormulaRandomizer(range.getCell(index + 1, 4)))
+  value() {
+    return this.range().getValue()
   }
 
-  userEmail() {
-    return this.namedRangeValue(this.emailNamedRange)
-  }
-
-  namedRangeValue(rangeName) {
-    return this.fromNamedRange(rangeName).getValue()
+  range() {
+    return this.fromNamedRange(this.rangeName)
   }
 
   fromNamedRange(rangeName) {
@@ -33,6 +25,39 @@ const BookingSheetConnector = class BookingSheetConnector {
     return namedRange
   }
 
+  toString() {
+    return `${this.constructor.name}(${this.memberToString()})`
+  }
+}
+
+const BookingSheetConnector = class BookingSheetConnector {
+  constructor(bookingValuesRetriever, rowToValueMapper) {
+    this.rowToValueMapper = rowToValueMapper
+    this.bookingValuesRetriever = bookingValuesRetriever
+    log.fine(`connecting to ${this}`)
+  }
+
+  bookingValues() {
+    return this.bookingValuesRetriever.values().map((row) => this.rowToValueMapper.map(row)).filter((bookingValue) => (bookingValue.bookable() == true))
+  }
+
+  updateFormulasInBookingRange() {
+    log.info(`updating formulae in ${this.bookingValuesRetriever}`)
+    let range = this.bookingValuesRetriever.range()
+    let cellsWithRandomizer = []
+    for(let i=1;i<range.getNumRows();i++) {
+      for(let j=1;j<range.getNumColumns();j++) {
+        let cell = range.getCell(i,j)
+        if(cell.isBlank()) {
+          break
+        }
+        if(cell.getFormula().includes(';randomizer_')) {
+          cellsWithRandomizer.push(cell)
+        }
+      }
+    }
+    cellsWithRandomizer.forEach(cell => addFormulaRandomizer(cell))
+  }
 
   toString() {
     return `${this.constructor.name}(${this.memberToString()})`

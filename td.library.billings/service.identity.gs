@@ -6,7 +6,9 @@ const IdentityService = class IdentityService {
     this.identityApiConnector = identityApiConnector
   }
 
-  _workerKey() { }
+  workerKey() {
+    return this._workerKey()
+  }
 
   toString() {
     return `${this.constructor.name}(${this.memberToString()})`
@@ -15,17 +17,13 @@ const IdentityService = class IdentityService {
 
 importUnderscore()
 
-IdentityService.prototype.workerKey = _.memoize(function() {
-  return this._workerKey()
-})
-
 const MyIdentityService = class MyIdentityService extends IdentityService {
   static connect(authToken) {
     return new MyIdentityService(new api.ApiConnector('https://jira.tdservice.cloud/rest/api/2/myself', authToken))
   }
 
   _workerKey() {
-    return this.identityApiConnector.fetch().key
+    return _.memoize(function(){return this.identityApiConnector.fetch().key})
   }
 
 }
@@ -45,7 +43,10 @@ const OtherIdentityService = class OtherIdentityService extends IdentityService 
   }
 
   _workerKey() {
-    return this.identityApiConnector.fetchWithParams({ username: this.userEmail })[0].key
+    // https://stackoverflow.com/questions/24486856/how-underscore-memoize-is-implemented-in-javascript
+    return _.memoize(function (identityApiConnector, userEmail) {
+      return identityApiConnector.fetchWithParams({ username: userEmail })[0].key
+    })(this.identityApiConnector, this.userEmail)
   }
 
   toString() {

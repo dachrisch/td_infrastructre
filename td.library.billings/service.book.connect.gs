@@ -1,10 +1,30 @@
 /**
  * function called from sheet appscript
  */
-function bookBillingsFromNamedRange() {
-  let token = authenticate()
-  let sheetConnector = new BookingSheetConnector(SpreadsheetApp.getActiveSpreadsheet())
-  let bookingService = new BookingService(new api.ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', token), OtherIdentityService.connect(token, sheetConnector.userEmail()))
+function bookBillingsFromNamedRange(namedRangeValues, namedRangeEmail, spreadsheetId, _token) {
+  let spreadsheet = (spreadsheetId == undefined) ? SpreadsheetApp.getActiveSpreadsheet() : SpreadsheetApp.openById(spreadsheetId)
+  let token = (_token == undefined) ? authenticate() : _token
+
+  let sheetConnector = new BookingSheetConnector(new NamedRangeRetriever(spreadsheet, namedRangeValues), new SingleUserDateTicketRowToValueMapper(OtherIdentityService.connect(token, new NamedRangeRetriever(spreadsheet, namedRangeEmail).value())))
+  let bookingService = BookingService.create(token)
+
+  sheetConnector.bookingValues().forEach(bookingValue => bookingService.bookEntry(bookingValue))
+
+  sheetConnector.updateFormulasInBookingRange()
+}
+
+/**
+ * function called from sheet appscript
+ * @param {String} namedRange - name of the range with data
+ * @param {String} spreadsheetId - used for testing, SpreadsheetApp.getActiveSpreadsheet() when empty
+ * @param {String} token - used for testing, authenticate() when empty
+ */
+function bookBillingsFromNamedRangeForUser(namedRange, spreadsheetId, _token) {
+  let spreadsheet = (spreadsheetId == undefined) ? SpreadsheetApp.getActiveSpreadsheet() : SpreadsheetApp.openById(spreadsheetId)
+  let token = (_token == undefined) ? authenticate() : _token
+
+  let sheetConnector = new BookingSheetConnector(new NamedRangeRetriever(spreadsheet, namedRange), new MultiUserDateTicketRowToValueMapper(token))
+  let bookingService = BookingService.create(token)
 
   sheetConnector.bookingValues().forEach(bookingValue => bookingService.bookEntry(bookingValue))
 
@@ -22,4 +42,9 @@ function authenticate() {
   } else if (button === ui.Button.CLOSE) {
     throw new Error('not authenticated')
   }
+}
+
+function t() {
+  //bookBillingsFromNamedRange('booking.range', 'booking.email', '1xRLFaHKPNbmI7KM7p9qBROAqlyLngPJWMN5n0c41kbs', new TempoTokenService().getToken())
+  bookBillingsFromNamedRangeForUser('booking.entries.with.header', '1dlWCU47JxNe36lOtHvbhKlpu1VAanMsbVexuzSEMtqk', new TempoTokenService().getToken())
 }

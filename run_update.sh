@@ -7,7 +7,7 @@ jq -c '.[]' projects.json | while read i; do
         project_id=$(echo "$i"|jq -r .projectId)
         project_name=$(echo "$i"|jq -r .projectName)
         echo "$project_name: $project_id"
-        rm -rf ${project_name:?}/*
+        if [ -d $project_name ];then rm -rf ${project_name:?}/*;fi
         python update.py $project_id $project_name
 done
 deactivate

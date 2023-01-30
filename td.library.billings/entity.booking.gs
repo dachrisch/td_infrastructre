@@ -6,15 +6,21 @@ const BookingEntry = class BookingEntry {
    * @param {Number} hoursToBook
    * @param {String} comment
    */
-  constructor(workerKey, startedMoment, ticketKey, hoursToBook, comment) {
+  constructor(workerKey, startedMoment, ticketKey, hoursToBook, comment, accountKey = 'TD') {
     this.timeSpentSeconds = hoursToBook * 60 * 60
     this.attributes = {
       _NotBillable_: {
         name: "Not Billable",
         workAttributeId: 2,
         value: false
+      },
+      _Account_: {
+        name: "Account",
+        workAttributeId: 7,
+        value: accountKey
       }
     }
+
     this.billableSeconds = 0
     this.worker = workerKey
     this.comment = comment
@@ -49,20 +55,32 @@ const BookedEntry = class BookedEntry {
 }
 
 const BookingValue = class BookingValue {
-  static fromRange(row) {
-    return new BookingValue(row[0], row[1], new URI(row[2]), row[4], row[5])
+
+  static EMPTY() {
+    return new BookingValue('00.00.0000', '', '', 0, '00:00', '00:00', false)
   }
   /**
+   * @param {String} bookingDate - date of booking (DD.MM.YYYY)
+   * @param {String} bookingComment - comment for booking
    * @param {URI} ticketUri
-   * @param {Number} hoursToBook
+   * @param {String} workerId
+   * @param {String} startTime (HH:mm)
+   * @param {String} endTime (HH:mm)
    * @param {Boolean} shouldBook
    */
-  constructor(bookingDate, bookingComment, ticketUri, hoursToBook, shouldBook) {
+  constructor(bookingDate, bookingComment, ticketUri, workerId, startTime, endTime, shouldBook) {
     this.bookingDate = bookingDate
     this.bookingComment = bookingComment
     this.ticketUri = ticketUri
-    this.hoursToBook = hoursToBook
+    this.startTimeMoment = moment(startTime, 'HH:mm')
+    this.endTime = endTime
     this.shouldBook = shouldBook
+    this.workerId = workerId
+    log.finer(this.toString())
+  }
+
+  bookable() {
+    return this.shouldBook && this.hoursToBook() > 0.01
   }
 
   toString() {
@@ -73,7 +91,12 @@ const BookingValue = class BookingValue {
     return this.ticketUri.filename()
   }
 
-  toEntry(worker) {
-    return new BookingEntry(worker, moment(this.bookingDate), this.ticketKey(), this.hoursToBook, this.bookingComment)
+  hoursToBook() {
+    return moment.duration(moment(this.endTime, 'HH:mm').diff(this.startTimeMoment)).as('hours')
+  }
+
+  toEntry(accountKey) {
+    let startMoment = moment(this.bookingDate, 'DD.MM.YYYY').hours(this.startTimeMoment.hours()).minutes(this.startTimeMoment.minutes())
+    return new BookingEntry(this.workerId, startMoment, this.ticketKey(), this.hoursToBook(), this.bookingComment, accountKey)
   }
 }

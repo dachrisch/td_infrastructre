@@ -1,5 +1,5 @@
 Object.prototype.memberToString = function () {
-  return Object.getOwnPropertyNames(this).map((propertyName) => `${propertyName}=${this[propertyName].toString()}`).join(', ')
+  return Object.getOwnPropertyNames(this).map((propertyName) => `${propertyName}=${JSON.stringify(this[propertyName].toString())}`).join(', ')
 }
 
 String.prototype.addQuery = function (parameter) {
