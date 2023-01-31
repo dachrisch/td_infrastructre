@@ -43,8 +43,3 @@ function authenticate() {
     throw new Error('not authenticated')
   }
 }
-
-function t() {
-  //bookBillingsFromNamedRange('booking.range', 'booking.email', '1xRLFaHKPNbmI7KM7p9qBROAqlyLngPJWMN5n0c41kbs', new TempoTokenService().getToken())
-  bookBillingsFromNamedRangeForUser('booking.entries.with.header', '1dlWCU47JxNe36lOtHvbhKlpu1VAanMsbVexuzSEMtqk', new TempoTokenService().getToken())
-}

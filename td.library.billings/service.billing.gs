@@ -14,7 +14,7 @@ const BillingsService = class BillingsService {
   }
 }
 
-const AllCurrentUserBillingsService = class AllCurrentUserBillingsService extends BillingsService {
+var AllCurrentUserBillingsService = class AllCurrentUserBillingsService extends BillingsService {
   static connect(authToken) {
     return new AllCurrentUserBillingsService(
       new api.ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/search', authToken),

@@ -12,7 +12,7 @@ class ExportableBillings {
   toSheet(spreadsheetWrapper) {
 
     this.billingsByQuarter.forEach((billings, quarter) => {
-      let quarterSheet = spreadsheetWrapper.createOrGetSheet(quarter).clear()
+      let quarterSheet = spreadsheetWrapper.createOrGetSheet(quarter).protect().clear()
       quarterSheet
         .on('A1:G1').setHeader('Date', 'From', 'To', 'Description', 'Booking Factor', 'Duration', 'Booking duration').and()
         .on('A:G').appendValues(billings.map((billing) => [

@@ -23,7 +23,7 @@ const MyIdentityService = class MyIdentityService extends IdentityService {
   }
 
   _workerKey() {
-    return _.memoize(function(){return this.identityApiConnector.fetch().key})
+    return _.memoize(function(identityApiConnector){return identityApiConnector.fetch().key})(this.identityApiConnector)
   }
 
 }

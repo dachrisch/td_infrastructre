@@ -26,7 +26,7 @@ const RangeWrapper = class RangeWrapper {
   }
 
   setValuesVariableLength(values) {
-    if (this.range.getNumRows() < values.length) { throw Error(`Not enough rows at ${this.location()}: needed ${values.lenght} but only had ${this.range.getNumRows()}`) }
+    if (this.range.getNumRows() < values.length) { throw Error(`Not enough rows at ${this.location()}: needed ${values.length} but only had ${this.range.getNumRows()}`) }
     let subRange = this.range.getSheet().getRange(this.range.getRow(), this.range.getColumn(), values.length, this.range.getNumColumns())
     logger.log(`[${this.sheetWrapper.name}] - setting values at subrange [${subRange.getA1Notation()}] of [${this.location()}] to [${values}]`)
     subRange.setValues(values)
@@ -70,6 +70,7 @@ const RangeWrapper = class RangeWrapper {
   asHeader() {
     logger.log(`[${this.sheetWrapper.name}] - setting [${this.location()}] as header`)
     this.range.setTextStyle(headerStyle())
+    return this
   }
 
   /**

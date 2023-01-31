@@ -1,4 +1,4 @@
-const ExportBillingsService = class ExportBillingsService {
+var ExportBillingsService = class ExportBillingsService {
   constructor(billingsService) {
     this.billingsService = billingsService
   }
@@ -9,6 +9,10 @@ const ExportBillingsService = class ExportBillingsService {
 
   exportYear(momentInYear) {
     return new ExportableBillings(this.billingsService.getInRange(momentInYear.clone().startOf('year'), momentInYear.clone().endOf('year')))
+  }
+
+  exportUntil(momentFrom, momentUntil){
+    return new ExportableBillings(this.billingsService.getInRange(momentFrom, momentUntil))
   }
 
   toString() {
