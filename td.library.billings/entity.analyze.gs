@@ -83,7 +83,7 @@ class AnalyzableBillingsSheet {
 
     forecastTrendSheet
       .on('J2').setHeader('End of Month').withBackground(AnalyzableBillingsSheet.COLORS.blue).and()
-      .on('J3').setFormula(`=ARRAYFORMULA(EDATE(forecast.month.last;forecast.months.relative))`).and()
+      .on('J3').setFormula(`=ARRAYFORMULA(EOMONTH(forecast.month.last;forecast.months.relative))`).and()
       .on('K2').setHeader('Trend hours in Month').withBackground(AnalyzableBillingsSheet.COLORS.orange).and()
       .on('K3').setFormula(`=if(forecast.threshold.above;SUMIFS(forecast.history.durations;forecast.history.dates;">="&forecast.month.first;forecast.history.dates; "<="&forecast.month.last);AVERAGE(forecast.actual.sums))`).and()
       .on(`K3:K${months + 2}`).setNamedRange('forecast.trend.hours').and()
