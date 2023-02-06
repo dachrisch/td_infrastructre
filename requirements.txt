@@ -1,2 +1,4 @@
 browser_cookie3
 requests
+beautifulsoup4
+
