@@ -1,4 +1,8 @@
 const WhenConditionWrapper = class WhenConditionWrapper {
+  /**
+   * @param {SheetWrapper} sheetWrapper
+   * @param {RangeWrapper} rangeWrapper
+   */
   constructor(sheetWrapper, rangeWrapper) {
     this.sheetWrapper = sheetWrapper
     this.rangeWrapper = rangeWrapper
@@ -17,6 +21,11 @@ const WhenConditionWrapper = class WhenConditionWrapper {
 }
 
 const ThenConditionWrapper = class ThenConditionWrapper {
+  /**
+   * @param {SheetWrapper} sheetWrapper
+   * @param {RangeWrapper} rangeWrapper
+   * @param {SpreadsheetApp.ConditionalFormatRuleBuilder} rule
+   */
   constructor(sheetWrapper, rangeWrapper, rule) {
     this.sheetWrapper = sheetWrapper
     this.rangeWrapper = rangeWrapper
@@ -28,6 +37,10 @@ const ThenConditionWrapper = class ThenConditionWrapper {
     return this
   }
 
+  /**
+   * build the rule and apply it to sheet
+   * @return {RangeWrapper}
+   */
   build() {
     this.sheetWrapper.appendConditionalFormatRule(this.rule)
     return this.rangeWrapper
