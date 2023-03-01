@@ -21,7 +21,7 @@ const BookingEntry = class BookingEntry {
       }
     }
 
-    this.billableSeconds = 0
+    this.billableSeconds = this.timeSpentSeconds
     this.worker = workerKey
     this.comment = comment
     this.started = startedMoment.format('YYYY-MM-DD HH:mm:ss.SSS')

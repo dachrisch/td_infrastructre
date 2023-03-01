@@ -16,18 +16,18 @@ function get_token() {
   console.log(tempo_token())
 }
 
-function play_remove_friday_events() {
+function play_remove_non_working_events() {
   let from_date = moment()
   let to_date = moment().endOf('year')
-  let userCalendar=getCalendarByName(Session.getActiveUser().getEmail())
+  let userCalendar = getCalendarByName(Session.getActiveUser().getEmail())
   let events = userCalendar.getEvents(from_date.toDate(), to_date.toDate())
 
-  let fridays = events.filter(e => e.getStartTime().getDay() == 5).filter(e => e.getTitle() != 'frei')
+  let fridays = events.filter(e => [0, 5, 6].includes(e.getStartTime().getDay())).filter(e => !['frei', 'Urlaub'].includes(e.getTitle()))
   console.log(`about to detele ${fridays.length} friday events`)
-  fridays.forEach(f=>{
+  fridays.forEach(f => {
     console.log(`removing ${f.getStartTime().toISOString()}, ${f.getTitle()}`)
     f.deleteEvent()
-    })
+  })
 }
 
 function play_getAccount() {
