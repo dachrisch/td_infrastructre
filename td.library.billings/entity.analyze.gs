@@ -20,7 +20,7 @@ class AnalyzableBillingsSheet {
 
   createForecastHistory() {
     let forecastHistorySheet = this.spreadsheetWrapper.createOrGetSheet('forecast history').protect().clear()
-    let sheetQueries = this.billingSheets.map((sheet) => `query('${sheet}'!A:G;"select A,F,D,G";0)`)
+    let sheetQueries = this.billingSheets.map((sheet) => `query('${sheet}'!A2:G;"select A,F,D,G";0)`)
     forecastHistorySheet
       .on('A1:D1').setHeader('date', 'duration', 'description', 'booking duration').and()
       .on('A2').setFormula(`sort({${sheetQueries.join(';')}})`).and()

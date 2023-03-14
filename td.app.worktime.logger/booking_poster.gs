@@ -32,7 +32,12 @@ function book_selections(selections) {
       booking.booking_info.account_name = issueAccount(booking.booking_info.issue_key)['key']
     }
     booking.worker_key = worker_key
-    return book(booking)
+    try {
+      return book(booking)
+    }catch(e) {
+      Logger.log(`error while posting [${JSON.stringify(booking)}]: ${e}`)
+      throw Error(`error while posting [${JSON.stringify(booking)}]: ${e}`)
+    }
   })
 }
 

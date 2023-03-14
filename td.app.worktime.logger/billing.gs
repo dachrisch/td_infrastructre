@@ -26,19 +26,6 @@ function create_export_trigger(hour) {
   return export_trigger
 }
 
-function export_billings_current_quarter() {
-  let spreadsheet_url = get_spreadsheet_url()
-  let now = moment()
-  let billings = main_calendar_billings_in_quarter(now)
-  let message = `exporting [${billings.length}] billings in quarter [${now.year()}/${now.quarter()}] to [${spreadsheet_url}]`
-  console.info(message)
-  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=export_billings_${now}`)
-  if (billings.length > 0) {
-    export_billings(spreadsheet_url, billings)
-  }
-  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=complete&series=export_billings_${now}&metric=count:${billings.length}&message=${message}`)
-}
-
 function billings_properties() {
   return Object.fromEntries(
     Object.entries(UserProperties.getProperties()).filter(

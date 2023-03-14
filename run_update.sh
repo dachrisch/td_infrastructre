@@ -8,7 +8,7 @@ jq -c '.[]' projects.json | while read i; do
         project_name=$(echo "$i"|jq -r .projectName)
         echo "$project_name: $project_id"
         if [ -d $project_name ];then rm -rf ${project_name:?}/*;fi
-        python update.py $project_id $project_name
+        python3 update.py $project_id $project_name
 done
 deactivate
 git --no-pager diff
