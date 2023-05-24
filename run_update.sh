@@ -1,12 +1,14 @@
 #!/bin/zsh
 
 set -e
+setopt +o nomatch
 source .venv/bin/activate
 jq -c '.[]' projects.json | while read i; do
         # Do stuff here
         project_id=$(echo "$i"|jq -r .projectId)
         project_name=$(echo "$i"|jq -r .projectName)
         echo "$project_name: $project_id"
+        # https://unix.stackexchange.com/questions/310540/how-to-get-rid-of-no-match-found-when-running-rm
         if [ -d $project_name ];then rm -rf ${project_name:?}/*;fi
         python3 update.py $project_id $project_name
 done
