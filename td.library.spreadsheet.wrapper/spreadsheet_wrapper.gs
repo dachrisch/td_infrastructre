@@ -21,8 +21,8 @@ var SpreadsheetWrapper = class SpreadsheetWrapper {
    * @return {SheetWrapper}
    */
   getSheet(name) {
-    let sheet =  this.spreadsheet.getSheetByName(name)
-    logger.info(`getting sheet [${name}]: ${sheet.getSheetId()}`)
+    let sheet = this.spreadsheet.getSheetByName(name)
+    logger.info(`getting sheet [${name}]: ${sheet ? sheet.getSheetId() : '<null>'}`)
     return new SheetWrapper(name, sheet)
   }
 
