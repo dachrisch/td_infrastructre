@@ -1,6 +1,6 @@
 const MiroBoardService = class MiroBoardService {
   static connectTo(boardId, token) {
-    return new MiroBoardService(new api.ApiConnector('https://api.miro.com/v2/boards/' + boardId, token))
+    return new MiroBoardService(new api.createBearer('https://api.miro.com/v2/boards/' + boardId, token))
   }
   constructor(miroConnector) {
     this.miroConnector = miroConnector

@@ -1,6 +1,6 @@
 const AccountService = class AccountService {
   static create(token) {
-    return new AccountService(new api.ApiConnector('https://jira.tdservice.cloud/rest/api/2/issue', token))
+    return new AccountService(new api.createBearer('https://jira.tdservice.cloud/rest/api/2/issue', token))
   }
   constructor(tempoApiConnector) {
     this.tempoApiConnector = tempoApiConnector
@@ -15,7 +15,7 @@ const AccountService = class AccountService {
 
 const BookingService = class BookingService {
   static create(token) {
-    return new BookingService(new api.ApiConnector('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', token),
+    return new BookingService(new api.createBearer('https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs', token),
       AccountService.create(token))
   }
   /**

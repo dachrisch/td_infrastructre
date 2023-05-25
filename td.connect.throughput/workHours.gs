@@ -12,7 +12,7 @@ function hoursWorkedOnTicket(ticketId, emails) {
     let flattenedEmails = emails.filter(emptyElementsFilter).map(e => e[0])
 
     log.info(`retrieving worked time of [${ticketId}] for user [${flattenedEmails}]`)
-    let workhoursRetriever = new api.ApiConnector('https://jira.tdservice.cloud/rest/api/2/issue', ScriptProperties.getProperty('tempo.token'))
+    let workhoursRetriever = new api.createBearer('https://jira.tdservice.cloud/rest/api/2/issue', ScriptProperties.getProperty('tempo.token'))
 
     let allWorklogs = workhoursRetriever.on(`${ticketId}/worklog`).fetch().worklogs
     let userWorklogs = allWorklogs.filter(wl => flattenedEmails.includes(wl.author.emailAddress))
