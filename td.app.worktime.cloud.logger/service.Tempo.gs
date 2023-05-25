@@ -5,8 +5,11 @@ class TempoWorklogsService extends Entity {
    */
   constructor(jiraIssueService, jiraMyselfService) {
     super()
-    let endpoint = "https://api.tempo.io/4/worklogs"
-    this.worklogApi = api.createBearer(endpoint, PropertiesService.getScriptProperties().getProperty('tempoToken'))
+    if (globalTest) {
+      this.worklogApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoTestToken'))
+    } else {
+      this.worklogApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
+    }
     this.jiraIssueService = jiraIssueService
     this.jiraMyselfService = jiraMyselfService
     //api.log.setLevel(logger.Level.FINE)

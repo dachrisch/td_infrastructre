@@ -2,9 +2,11 @@ class JiraService extends Entity {
   constructor(part) {
     super()
     let username = 'c.daehn@techdivision.com'
-    //let endpoint = "https://techdivision.atlassian.net/rest/api/3"
-    let endpoint = "https://techdivision-sandbox-715.atlassian.net/rest/api/3"
-    this.jiraApi = api.createBasic(endpoint, username, PropertiesService.getScriptProperties().getProperty('jiraToken')).on(part)
+    if (globalTest) {
+      this.jiraApi = api.createBasic(scriptProperty('jiraTestEndpoint'), username, scriptProperty('jiraToken')).on(part)
+    }else {
+      this.jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken')).on(part)
+    }
   }
 }
 
@@ -29,7 +31,8 @@ class JiraIssueService extends JiraService {
   }
 
   /**
-   * @param {EventWrapper} eventWrapper
+   * @param {EventWrapper} event
+   * @returns {Boolean} if event has a valid event.bookingInfo.issueKey
    * 
    */
   hasValidKey(event) {
