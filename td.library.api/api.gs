@@ -10,10 +10,21 @@ String.prototype.addQuery = function (parameter) {
   return this + queryPart
 }
 
+/**
+ * @param {String} endpoint - Endpoint to an API
+ * @param {String} authToken - auth token
+ * @returns {ApiConnector}
+ */
 function createBearer(endpoint, authToken) {
   return new ApiConnector(endpoint, new BearerAuthorizationProvider(authToken))
 }
 
+/**
+ * @param {String} endpoint - Endpoint to an API
+ * @param {String} username - user to act as
+ * @param {String} authToken - auth token
+ * @returns {ApiConnector}
+ */
 function createBasic(endpoint, username, authToken) {
   return new ApiConnector(endpoint, new BasicAuthorizationProvider(username, authToken))
 }

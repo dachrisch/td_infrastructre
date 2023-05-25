@@ -34,4 +34,12 @@ class EventWrapper extends Entity {
   duration() {
     return moment.duration(this.endMoment.diff(this.startMoment))
   }
+
+  billingDuration() {
+    let bd = 0
+    if (this.bookingInfo.billable) {
+      bd = (this.bookingInfo.hourFactor * this.duration().as('seconds')).toFixed()
+    }
+    return bd
+  }
 }

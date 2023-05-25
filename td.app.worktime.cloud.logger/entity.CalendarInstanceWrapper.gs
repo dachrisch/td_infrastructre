@@ -3,6 +3,7 @@ class CalendarInstanceWrapper extends Entity {
    * @param {CalendarApp.Calendar} calendar
    */
   static fromApp(calendar) {
+    assertTypeOf(calendar, 'object')
     return new CalendarInstanceWrapper(calendar.getName(), calendar)
   }
 
