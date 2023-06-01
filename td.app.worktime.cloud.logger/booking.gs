@@ -12,11 +12,22 @@ function bookLast30days(numLastDays = 30) {
  * @param {Array.<CalendarInstanceWrapper>} calendars
  */
 function bookWorklogs(then, now, calendars) {
-  let issuesService = new JiraIssueService()
-  let jiraMyselfService = new JiraMyselfService()
-  let worklogsService = new TempoWorklogsService(issuesService, jiraMyselfService)
+  let username = 'c.daehn@techdivision.com'
+  let jiraApi = null
+  let worklogApi=null
+  if (globalTest) {
+    jiraApi = api.createBasic(scriptProperty('jiraTestEndpoint'), username, scriptProperty('jiraToken'))
+    worklogApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoTestToken'))
+  } else {
+    jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
+    worklogApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
+  }
 
-  let telemetry=Telemetry.forSeries('book_worklogs')
+  let issuesService = new jira.JiraIssueService(jiraApi)
+  let jiraMyselfService = new jira.JiraMyselfService(jiraApi)
+  let worklogsService = new jira.TempoWorklogsService(worklogApi, issuesService, jiraMyselfService)
+
+  let telemetry = Telemetry.forSeries('book_worklogs')
   telemetry.start()
 
   calendars.forEach((calendar) => {
@@ -29,7 +40,7 @@ function bookWorklogs(then, now, calendars) {
     log.fine(`Events with valid keys ${withValidKeys.length}`)
     let bookable = withValidKeys.filter((event) => worklogsService.hasNoBooking(event))
     log.info(`${bookable.length} Events without existing bookings: ${bookable}`)
-    telemetry.count(bookable.length, `${calendar.name}: ${bookable}` )
+    telemetry.count(bookable.length, `${calendar.name}: ${bookable}`)
     bookable.forEach((event) => {
       worklogsService.book(event)
     })

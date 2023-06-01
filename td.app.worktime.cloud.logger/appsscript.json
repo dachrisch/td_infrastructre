@@ -14,6 +14,12 @@
         "userSymbol": "logger",
         "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt",
         "version": "20"
+      },
+      {
+        "userSymbol": "jira",
+        "version": "0",
+        "libraryId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
+        "developmentMode": true
       }
     ]
   }

@@ -1,4 +1,8 @@
-function book_workklogs_last_30_days() {
+/**
+ * @deprecated - https://script.google.com/home/projects/1EGSzc9Uuo09vUj9ZZjshg83ko3Zu-HvXjAYNMqi2a2Vb9T8ZKmqfHAwH/edit
+ */
+function xx_book_workklogs_last_30_days() {
+  
   let now = moment()
   UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=book_worklogs_${now}`)
   loadCalendars().forEach((calendar) => {
