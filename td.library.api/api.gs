@@ -85,7 +85,15 @@ var ApiConnector = class ApiConnector {
     log.finest(`validating response ${response}`)
     let responseCode = response.getResponseCode()
     if (expectedResponseCode != responseCode) { throw new HttpError(responseCode, 'fetch', this.endpoint, response.getContentText()) }
-    let jsonResponse = JSON.parse(response.getContentText())
+    let jsonResponse={}
+    let responseText = response.getContentText()
+    if(responseText) {
+      log.finest(`parsing JSON from response: ${responseText}`)
+      jsonResponse = JSON.parse(responseText)
+    } else {
+      log.finest('got empty response')
+    }
+    log.finest(`returning json response: ${JSON.stringify(jsonResponse)}`)
     return jsonResponse
   }
 
