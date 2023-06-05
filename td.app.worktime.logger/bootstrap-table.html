@@ -89,7 +89,7 @@
   }
 
   function billableFormatter(value, row) {
-    if(row.attributes && row.attributes._NotBillable_ && row.attributes._NotBillable_.value=='false') {
+    if(row.billable) {
       return 'x'
     } else {
       return '-'

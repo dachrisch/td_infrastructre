@@ -41,9 +41,9 @@ function testDefaultBilling(_test) {
     t.equal(0, bookings[0].billableSeconds, 'no billable seconds')
     t.equal(8 * 60 * 60, bookings[0].timeSpentSeconds, 'spent seconds = 8h')
     t.equal(event.getTitle(), bookings[0].comment, 'matching summary')
-    t.equal("true", bookings[0].attributes._NotBillable_.value, 'not billable')
+    t.equal(false, bookings[0].billable, 'not billable')
     t.equal("ACCBILLMON-2", bookings[0].issue.key, 'correct billing ticket')
-    t.equal(moment(event.getStartTime()).format('YYYY-MM-DD HH:mm:ss.000'), bookings[0].started, 'correct start date')
+    t.equal(moment(event.getStartTime()).format('HH:mm:ss'), bookings[0].start_time, 'correct start time')
 
   });
   _test || test.finish()
@@ -73,7 +73,7 @@ function testBillableBillingFromDescription(_test) {
   var test = _test || new GasTap()
   cleanup()
 
-  test('book event to billing ticket from description', function (t) {
+  test('book billable event to billing ticket from description', function (t) {
     let event = CalendarApp.createEvent('Test Event Nine to Five', new Date(1970, 5, 4, 9), new Date(1970, 5, 4, 17))
     event.setDescription('booking://ACCBILLMON-3?billable=true&hourFactor=1.125')
     let worklogs = getWorklogsAsJson(range_from.getTime(), range_to.getTime())
@@ -82,9 +82,8 @@ function testBillableBillingFromDescription(_test) {
     let bookings = bookingsInRange(range_from, range_to)
     t.equal(1, bookings.length, 'only one booking created')
     t.equal("ACCBILLMON-3", bookings[0].issue.key, 'correct billing ticket')
-    t.equal(8 * 60 * 60 * 1.125, bookings[0].timeSpentSeconds, 'spent seconds with factor')
-    t.equal(bookings[0].timeSpentSeconds, bookings[0].billableSeconds, 'billable duration same as overall duration')
-    t.equal('false', bookings[0].attributes._NotBillable_.value, 'is billable')
+    t.equal(bookings[0].timeSpentSeconds * 1.125, bookings[0].billableSeconds, 'spent seconds with factor')
+    t.equal(true, bookings[0].billable, 'is billable')
 
   });
   _test || test.finish()

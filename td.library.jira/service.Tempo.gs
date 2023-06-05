@@ -95,9 +95,7 @@ var TempoWorklogBookService = class TempoWorklogBookService extends TempoService
       startDate: event.startMoment.format("YYYY-MM-DD"),
       startTime: event.startMoment.format("HH:mm:ss"),
       timeSpentSeconds: event.duration().as('seconds'),
-    }
-    if (event.bookingInfo.billable) {
-      payload['billableSeconds'] = event.billingDuration()
+      billableSeconds: event.bookingInfo.billable? event.billingDuration() : 0
     }
     log.fine(`booking ${event} with payload ${payload}`)
     let result = this.tempoApi.post(payload)

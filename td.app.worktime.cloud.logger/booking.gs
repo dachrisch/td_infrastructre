@@ -40,7 +40,7 @@ function bookWorklogs(then, now, calendars) {
     log.fine(`Events with valid keys ${withValidKeys.length}`)
     let bookable = withValidKeys.filter((event) => worklogsSearchService.hasNoBooking(event))
     log.info(`${bookable.length} Events without existing bookings: ${bookable}`)
-    telemetry.count(bookable.length, `${calendar.name}: ${bookable}`)
+    telemetry.count(bookable.length, `${calendar.name}: ${bookable.length}`)
     bookable.forEach((event) => {
       worklogsBookService.book(event)
     })
