@@ -1,0 +1,20 @@
+{
+  "timeZone": "Europe/Berlin",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "entity",
+        "version": "0",
+        "libraryId": "1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "logger",
+        "version": "20",
+        "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}
