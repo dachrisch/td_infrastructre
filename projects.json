@@ -50,6 +50,14 @@
   {
     "projectId": "1EGSzc9Uuo09vUj9ZZjshg83ko3Zu-HvXjAYNMqi2a2Vb9T8ZKmqfHAwH",
     "projectName": "td.app.worktime.cloud.logger"
+  },
+  {
+    "projectId": "1-N9OkafA2sQBYZjSbwtv5QYM7x4bB4DZJ-h2nryF1XPcX2GzNkNKQLnQ",
+    "projectName": "td.library.wrapper.calendar"
+  },
+  {
+    "projectId": "1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM",
+    "projectName": "td.library.entity"
   }
 
 ]

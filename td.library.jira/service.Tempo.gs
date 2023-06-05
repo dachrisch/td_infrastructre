@@ -1,15 +1,25 @@
-var TempoWorklogsService = class TempoWorklogsService extends Service {
+class TempoService extends Service {
   /**
-   * @param {JiraIssueService} jiraIssueService
-   * @param {JiraMyselfService} jiraMyselfService
+   * @param {ApiConnector} tempoApi
+   * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-
    */
-  constructor(worklogApi, jiraIssueService, jiraMyselfService) {
+  constructor(tempoApi) {
     super()
-    this.worklogApi=worklogApi
-    this.jiraIssueService = jiraIssueService
-    this.jiraMyselfService = jiraMyselfService
-    //api.log.setLevel(logger.Level.FINE)
+    this.tempoApi = tempoApi
+  }
 
+}
+
+var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoService {
+  /**
+   * @param {ApiConnector} tempoApi
+   * @param {ApiConnector} jiraApi
+   * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-
+   */
+  constructor(tempoApi, jiraApi) {
+    super(tempoApi.on('worklogs/search'))
+    this.jiraIssueService = new JiraIssueService(jiraApi)
+    this.jiraMyselfService = new JiraMyselfService(jiraApi)
   }
 
   /**
@@ -21,28 +31,20 @@ var TempoWorklogsService = class TempoWorklogsService extends Service {
     return this.bookingsForEvent(event).length == 0
   }
 
-  _myAccount() {
-    return this.jiraMyselfService.getMyself().accountId
-  }
-
-  _issueIdFor(event) {
-    return this.jiraIssueService.getIssue(event.bookingInfo.issueKey).id
-  }
-
   /**
    * @param {EventWrapper} event
    * 
    */
   bookingsForEvent(event) {
     log.fine(`get bookings for ${event}`)
-    let eventsOnDay = this.worklogApi.on('search').post({
+    let bookingsOnDay = this.tempoApi.post({
       from: event.startMoment.format("YYYY-MM-DD"),
       to: event.endMoment.format("YYYY-MM-DD"),
-      issueIds: [this._issueIdFor(event)],
-      authorIds: [this._myAccount()]
+      issueIds: [this.jiraIssueService.getIssue(event.bookingInfo.issueKey).id],
+      authorIds: [this.jiraMyselfService.getMyself().accountId]
     }).results
-    log.finest(`found ${eventsOnDay.length} bookings on day of event`)
-    let matchingBooking = eventsOnDay.filter((result) => {
+    log.finest(`found ${bookingsOnDay.length} bookings on day of event`)
+    let matchingBooking = bookingsOnDay.filter((result) => {
       let matchingTitle = result.description == event.title
       log.finest(`${result.description} == ${event.title}`)
       let matchingStart = result.startTime == event.startMoment.format("HH:mm:ss")
@@ -56,6 +58,30 @@ var TempoWorklogsService = class TempoWorklogsService extends Service {
   }
 
   /**
+   * @param {moment} startMoment
+   * @param {moment} endMoment
+   */
+  bookingsInTimerange(startMoment, endMoment) {
+    log.fine(`get bookings from ${startMoment} to ${endMoment}`)
+    let bookingsInRange = this.tempoApi.post({
+      from: startMoment.format("YYYY-MM-DD"),
+      to: endMoment.format("YYYY-MM-DD"),
+      authorIds: [this.jiraMyselfService.getMyself().accountId]
+    }).results
+    log.finest(`found ${bookingsInRange.length} bookings on day of event`)
+
+    return bookingsInRange
+  }
+}
+
+var TempoWorklogBookService = class TempoWorklogBookService extends TempoService {
+  constructor(tempoApi, jiraApi) {
+    super(tempoApi.on('worklogs'))
+    this.jiraIssueService = new JiraIssueService(jiraApi)
+    this.jiraMyselfService = new JiraMyselfService(jiraApi)
+  }
+
+  /**
    * @param {EventWrapper} event
    * @link https://apidocs.tempo.io/#tag/Worklogs/operation/createWorklog
    * @returns {String} link to created instance
@@ -63,8 +89,8 @@ var TempoWorklogsService = class TempoWorklogsService extends Service {
   book(event) {
     log.info(`booking ${event}`)
     let payload = {
-      authorAccountId: this._myAccount(),
-      issueId: this._issueIdFor(event),
+      authorAccountId: this.jiraMyselfService.getMyself().accountId,
+      issueId: this.jiraIssueService.getIssue(event.bookingInfo.issueKey).id,
       description: event.title,
       startDate: event.startMoment.format("YYYY-MM-DD"),
       startTime: event.startMoment.format("HH:mm:ss"),
@@ -74,9 +100,20 @@ var TempoWorklogsService = class TempoWorklogsService extends Service {
       payload['billableSeconds'] = event.billingDuration()
     }
     log.fine(`booking ${event} with payload ${payload}`)
-    let result = this.worklogApi.post(payload)
+    let result = this.tempoApi.post(payload)
     log.fine(`result: ${JSON.stringify(result)}`)
-    return result.self
+    return result
   }
 
+}
+
+var TempoWorklogDeleteService = class TempoWorklogBookService extends TempoService {
+  constructor(tempoApi) {
+    super(tempoApi.on('worklogs'))
+  }
+
+  delete(worklogId) {
+    log.info(`removing worklog with id ${worklogId}`)
+    this.tempoApi.on(worklogId).remove()
+  }
 }

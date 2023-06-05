@@ -104,8 +104,8 @@ var ApiConnector = class ApiConnector {
       muteHttpExceptions: true
     };
     log.fine(`about to delete [${this.endpoint}] with ${JSON.stringify(options)}`)
-    let responseCode = UrlFetchApp.fetch(this.endpoint, options).getResponseCode()
-    if (204 != responseCode) { throw new HttpError(responseCode, 'delete', this.endpoint, response.getContentText()) }
+    let response = UrlFetchApp.fetch(this.endpoint, options)
+    if (204 != response.getResponseCode()) { throw new HttpError(response.getResponseCode(), 'delete', this.endpoint, response.getContentText()) }
   }
 
   toString() {

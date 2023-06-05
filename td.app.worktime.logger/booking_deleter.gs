@@ -3,8 +3,11 @@ function deleteBookingsById(bookings) {
   return bookings
 }
 
+function scriptProperty(key) {
+  return PropertiesService.getScriptProperties().getProperty(key)
+}
+
 function deleteBooking(booking) {
-  let endpoint = 'https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/' + booking.originId
-  delete_fetch(endpoint)
+  tempoDeleteService().delete(booking.issue.id)
   return booking
 }

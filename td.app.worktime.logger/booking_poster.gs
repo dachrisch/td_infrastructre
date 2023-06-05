@@ -1,53 +1,38 @@
-/**
- * @deprecated - https://script.google.com/home/projects/1EGSzc9Uuo09vUj9ZZjshg83ko3Zu-HvXjAYNMqi2a2Vb9T8ZKmqfHAwH/edit
- */
-function xx_book_workklogs_last_30_days() {
-  
-  let now = moment()
-  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=run&series=book_worklogs_${now}`)
-  loadCalendars().forEach((calendar) => {
-    let pre_message = `booking worklogs from [${calendar.name}]`
-    Logger.info(pre_message)
-    let unbooked = unbooked_billables(CalendarApp.getCalendarById(calendar.id), moment().subtract(30, 'days'), moment())
-    let post_message = `booking ${unbooked.length} worklogs...`
-    Logger.info(post_message)
-    book_selections(unbooked)
-    UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?series=book_worklogs_${now}&metric=count:${unbooked.length}&message=${pre_message},${post_message}`)
-  })
-  UrlFetchApp.fetch(`https://cronitor.link/p/e785985352b14396982fa07f4ec0afb3/hJICeq?state=complete&series=book_worklogs_${now}`)
+class TempoBookingWrapperService extends jira.Service {
+  static getInstance() {
+    return new TempoBookingWrapperService(jiraIssueService())
+  }
+  constructor(issueService) {
+    super()
+    this.issueService = issueService
+  }
+  fromTempo(tempoBooking) {
+    let issueKey = this.issueService.getIssue(tempoBooking.issue.id)
+    return new TempoBookingWrapper(tempoBooking.startDate, tempoBooking.startTime, tempoBooking.timeSpentSeconds, tempoBooking.billableSeconds, tempoBooking.description, { id: tempoBooking.tempoWorklogId, key: issueKey })
+  }
 }
 
-function unbooked_billables(calendar, from_ts, to_ts) {
-  let from_date = new Date(from_ts)
-  let to_date = new Date(to_ts)
-  let worklogs = calendar.getEvents(from_date, to_date).map(event => worklog.fromEvent(event).toJson())
-  let bookings = bookingsInRange(from_date, to_date)
-  let worklogs_with_link = worklogs.map(worklog => withBookingInfo(worklog, bookings))
-  return worklogs_with_link.filter(wl => wl.booking_info.booking_link == null && wl.booking_info.issue_key != null)
+class TempoBookingWrapper extends entity.Entity {
+  constructor(date, start_time, timeSpentSeconds, billableSeconds, comment, issue) {
+    super()
+    this.date = date
+    this.start_time = start_time
+    this.end_time = moment(start_time, 'HH:mm:ss').add(timeSpentSeconds, 'seconds')
+    this.comment = comment
+    this.issue = issue
+    this.billable = billableSeconds > 0
+  }
 }
-
 function book_selections(selections) {
-  let worker_key = worker().key
   return selections.map(selection => {
-    let booking = tempoBooking.fromElement(selection)
-    booking.booking_info.issue_id = issueId(booking.booking_info.issue_key)
-    let account = issueAccount(booking.booking_info.issue_key)
-    if (account) {
-      booking.booking_info.account_name = issueAccount(booking.booking_info.issue_key)['key']
-    }
-    booking.worker_key = worker_key
+    let booking = entity.EventWrapper.fromSelection(selection)
     try {
-      return book(booking)
-    }catch(e) {
+      return TempoBookingWrapperService.getInstance().fromTempo(tempoBookService().book(booking))
+    } catch (e) {
       Logger.log(`error while posting [${JSON.stringify(booking)}]: ${e}`)
       throw Error(`error while posting [${JSON.stringify(booking)}]: ${e}`)
     }
   })
-}
-
-function book(tempo_booking) {
-  console.info(`booking ${JSON.stringify(tempo_booking)}`)
-  return post_worklog(tempo_booking)[0]
 }
 
 function connectToTempo() {

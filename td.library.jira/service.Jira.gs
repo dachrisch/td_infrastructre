@@ -1,13 +1,21 @@
 class JiraService extends Service {
-  constructor(jiraApi, part) {
+  /**
+   * @param {ApiConnector} jiraApi
+   * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-
+   */
+  constructor(jiraApi) {
     super()
-    this.jiraApi = jiraApi.on(part)
+    this.jiraApi = jiraApi
   }
 }
 
 var JiraMyselfService = class JiraMyselfService extends JiraService {
+  /**
+   * @param {ApiConnector} jiraApi
+   * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-
+   */
   constructor(jiraApi) {
-    super(jiraApi, 'myself')
+    super(jiraApi.on('myself'))
   }
 
   getMyself() {
@@ -16,8 +24,12 @@ var JiraMyselfService = class JiraMyselfService extends JiraService {
 }
 
 var JiraIssueService = class JiraIssueService extends JiraService {
+  /**
+   * @param {ApiConnector} jiraApi
+   * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-
+   */
   constructor(jiraApi) {
-    super(jiraApi, 'issue')
+    super(jiraApi.on('issue'))
     //api.log.setLevel(logger.Level.FINE)
   }
 

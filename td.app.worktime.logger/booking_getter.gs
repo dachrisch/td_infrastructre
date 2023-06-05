@@ -1,4 +1,3 @@
-
 /**
  *  Get booking in given date range
  *
@@ -8,16 +7,8 @@
  *
  */
 function bookingsInRange(from_date, to_date) {
-  let endpoint = 'https://jira.tdservice.cloud/rest/tempo-timesheets/4/worklogs/search'
-  let payload = {
-    from: moment(from_date).format('YYYY-MM-DD'),
-    to: moment(to_date).format('YYYY-MM-DD'),
-    worker: [
-      worker().key
-    ]
-  }
-  let bookings = post(endpoint, payload)
-  return bookings
+  let bookings = tempoSearchService().bookingsInTimerange(moment(from_date), moment(to_date))
+  return bookings.map((booking) => TempoBookingWrapperService.getInstance().fromTempo(booking))
 }
 
 function bookingsInRangeFromTime(from_unix_ts, to_unix_ts) {

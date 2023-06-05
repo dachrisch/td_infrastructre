@@ -16,6 +16,24 @@
         "version": "0",
         "libraryId": "1fFe0y-0iWKb_i8Jt_tZOaz3zejpQy3JgPZcKyGLKn9heQpVLpPUxt7vs",
         "developmentMode": true
+      },
+      {
+        "userSymbol": "jira",
+        "version": "0",
+        "libraryId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "api",
+        "version": "0",
+        "libraryId": "1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "entity",
+        "version": "0",
+        "libraryId": "1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM",
+        "developmentMode": true
       }
     ]
   },

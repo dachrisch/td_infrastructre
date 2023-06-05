@@ -1,4 +1,4 @@
-class Service {
+var Service = class Service {
 
   memberToString() {
     return Object.getOwnPropertyNames(this).map((propertyName) => {
