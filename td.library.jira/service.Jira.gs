@@ -58,3 +58,25 @@ var JiraIssueService = class JiraIssueService extends JiraService {
     return result
   }
 }
+
+var JiraIssuePickerService = class JiraIssuePickerService extends JiraService {
+  /**
+   * @param {ApiConnector} jiraApi
+   * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-
+   */
+  constructor(jiraApi) {
+    super(jiraApi.on('issue').on('picker'))
+    //api.log.setLevel(logger.Level.FINE)
+  }
+
+  workOnIssues(query) {
+    let params = {
+      'currentJQL': 'project in projectsWhereUserHasPermission("Work on issues")',
+      'query': query,
+      'showSubTaskParent': true,
+      'showSubTasks': true
+    }
+    return this.jiraApi.fetchWithParams(params)
+  }
+}
+

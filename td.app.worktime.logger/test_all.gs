@@ -1,4 +1,3 @@
-
 function runAllTests() {
   let logMessages = [];
 

@@ -10,8 +10,15 @@
     <span id="tempo_user"></span>
   </div>
   <div id="tempo_disconnected" style="display: none;">
-    <span>You need to obtain a <a href="https://jira.tdservice.cloud/secure/ViewProfile.jspa?selectedTab=com.atlassian.pats.pats-plugin:jira-user-personal-access-tokens" target="_blank">token</a> to connect to Jira/Tempo</span>
-    <div class="input-group">
+    <span>You need to obtain a 
+      <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank">jira token</a> and a
+      <a href="https://techdivision.atlassian.net/plugins/servlet/ac/io.tempo.jira/tempo-app#!/configuration/api-integration" target="_blank">tempo token</a> 
+    </span>
+    <div class="row">
+      <div class="form-floating">
+        <input type="text" class="form-control" id="jira_token">
+        <label for="jira_token">Jira token</label>
+      </div>
       <div class="form-floating">
         <input type="text" class="form-control" id="tempo_token">
         <label for="tempo_token">Tempo token</label>
@@ -49,11 +56,12 @@
   }
 
   function newTempoToken() {
-    let token=$('#tempo_token').val()
-    console.log(`storing new token ${JSON.stringify(token)}`)
+    let jiraToken=$('#jira_token').val()
+    let tempoToken=$('#tempo_token').val()
+    console.log(`storing new token ${jiraToken}, ${tempoToken}`)
     google.script.run
       .withSuccessHandler(connectTempo)
-      .store_tempo_token(token)
+      .store_token(jiraToken, tempoToken)
   }
 
 </script>

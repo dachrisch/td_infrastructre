@@ -44,7 +44,7 @@
   function bookingLinkFormatter(value, row, index) {
     let row_content=value
     if(row.booking_info.booking_link) {
-      let link=`<a href="https://jira.tdservice.cloud/secure/Tempo.jspa#/my-work/day?date=${moment(row.date,'DD.MM.YYYY').format('YYYY-MM-DD')}" target="_blank">${row.booking_info.booking_link}</a>`
+      let link=`<a href="https://techdivision.atlassian.net/plugins/servlet/ac/io.tempo.jira/tempo-app#!/my-work/week?date=${moment(row.date,'DD.MM.YYYY').format('YYYY-MM-DD')}" target="_blank">${row.booking_info.booking_link}</a>`
 
       row_content=link
     
@@ -74,18 +74,6 @@
     } else if ('already booked' == value) {
       return '-' != row
     }
-  }
-
-  function startDateFormatter(value, row, index) {
-    return moment(row.started).format('DD.MM.YYYY')
-  }
-
-  function startTimeFormatter(value, row) {
-    return moment(row.started).format('HH:mm')
-  }
-
-  function endTimeFormatter(value, row) {
-    return moment(row.started).add(row.timeSpentSeconds, 'seconds').format('HH:mm')
   }
 
   function billableFormatter(value, row) {

@@ -1,17 +1,27 @@
 function tempoApi() {
-  let tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
+  let tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), userProperty(tempoToken()))
   return tempoApi
 }
 
 function jiraApi() {
-  let username = 'c.daehn@techdivision.com'
-  let jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
+  let username = Session.getActiveUser().getEmail()
+  let jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, userProperty(jiraToken()))
   return jiraApi
 }
 
 function jiraIssueService() {
   let issueService= new jira.JiraIssueService(jiraApi())
   return issueService
+}
+
+function jiraMyselfService() {
+  let myselfService= new jira.JiraMyselfService(jiraApi())
+  return myselfService
+}
+
+function jiraPickerService() {
+  let pickerService= new jira.JiraIssuePickerService(jiraApi())
+  return pickerService
 }
 
 function tempoDeleteService() {
@@ -28,3 +38,8 @@ function tempoBookService() {
   let bookService = new jira.TempoWorklogBookService(tempoApi(), jiraApi())
   return bookService
 }
+
+function tempoIssues(query) {
+  return jiraPickerService().workOnIssues(query)
+}
+

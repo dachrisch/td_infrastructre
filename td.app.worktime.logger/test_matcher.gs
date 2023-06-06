@@ -24,8 +24,8 @@ function matcherTestRunner(_test) {
     t.equal(1, bookings.length, 'only one booking created')
     let booked_worklog = bookings[0]
 
-    t.equal('ACCBILLMON-3', booked_worklog.booking_info.issue_key, 'issue key')
-    t.equal('1013462', booked_worklog.booking_info.booking_link, 'matching has link to booking')
+    t.equal('ACCBILLMON-2', booked_worklog.issue.key, 'issue key')
+    t.equal(true, booked_worklog.issue.id != undefined, 'matching has link to booking')
 
   });
   _test || test.finish()

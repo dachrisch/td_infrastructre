@@ -11,7 +11,6 @@ function bookingTestRunner(_test) {
     t.deepEqual(new Date(2021, 11, 1, 9, 0), booking.start_date, 'date matches')
     t.equal(3600, booking.duration, 'duration matches')
     t.equal('Gemeinsamer Start', booking.summary, 'summary matches')
-    t.equal(new Date(2021, 11, 1, 10, 0).toJSON(), booking.toPayloadJson().started, 'tempo does not recognizes timezones')
   });
 
   test('moment from date', function (t) {

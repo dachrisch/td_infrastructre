@@ -3,10 +3,6 @@ function deleteBookingsById(bookings) {
   return bookings
 }
 
-function scriptProperty(key) {
-  return PropertiesService.getScriptProperties().getProperty(key)
-}
-
 function deleteBooking(booking) {
   tempoDeleteService().delete(booking.issue.id)
   return booking

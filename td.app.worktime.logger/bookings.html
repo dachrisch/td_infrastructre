@@ -101,4 +101,16 @@
     $('#deletion_button').prop("disabled",false);
   }
 
+  function startDateFormatter(value, row, index) {
+    return moment(row.date, 'YYYY-MM-DD').format('DD.MM.YYYY')
+  }
+
+  function startTimeFormatter(value, row) {
+    return moment(row.start_time, 'HH:mm:ss').format('HH:mm')
+  }
+
+  function endTimeFormatter(value, row) {
+    return moment(row.end_time, 'HH:mm:ss').format('HH:mm')
+  }
+
 </script>

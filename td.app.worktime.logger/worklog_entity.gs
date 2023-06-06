@@ -46,15 +46,3 @@ class worklog {
   }
 
 }
-
-class worklogs_range {
-  constructor(_from, _to, worklogs) {
-    this._from = _from
-    this._to = _to
-    this.worklogs = worklogs
-  }
-
-  toJson() {
-    return this.worklogs.map(worklog => worklog.toJson())
-  }
-}

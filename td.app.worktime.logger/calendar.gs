@@ -8,10 +8,10 @@ function setActiveCalendar(cal_id) {
 }
 
 function getActiveCalendar() {
-  let cal_id = PropertiesService.getUserProperties().getProperty('active_calendar')
+  let calId = PropertiesService.getUserProperties().getProperty('active_calendar')
   let calendar= calendarWrapper().getDefault()
   try {
-    calendar = calendarWrapper().byId(cal_id)
+    calendar = calendarWrapper().byId(calId)
   } catch (e) {
     if (e instanceof cWrap.CalendarError) {
       // pass (use default)
@@ -19,7 +19,7 @@ function getActiveCalendar() {
       throw e
     }
   }
-
+  console.log(`active calendar: ${calendar}`)
   return calendar
 }
 

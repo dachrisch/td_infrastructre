@@ -1,5 +1,7 @@
 function cleanup() {
-  UserProperties.deleteProperty('active_calendar')
+  PropertiesService.getUserProperties().deleteProperty('active_calendar')
+  setUserProperty('tempoToken', scriptProperty('tempoToken'))
+  setUserProperty('jiraToken', scriptProperty('jiraToken'))
   CalendarApp.getEvents(range_from, range_to).forEach(event => event.deleteEvent())
   bookingsInRange(range_from, range_to).forEach(booking => {
     deleteBooking(booking)
@@ -35,7 +37,14 @@ function testDefaultBilling(_test) {
 
     let booked_selections = book_selections(worklogs)
     t.equal(1, booked_selections.length, 'one item booked')
+    t.equal('1970-06-04', booked_selections[0].date, 'matching date')
+    t.equal('09:00:00', booked_selections[0].start_time, 'matching start_time')
+    t.equal('17:00:00', booked_selections[0].end_time, 'matching end_time')
+    t.equal(28800, booked_selections[0].timeSpentSeconds, 'matching summary')
     t.equal(event.getTitle(), booked_selections[0].comment, 'matching summary')
+    t.equal(false, booked_selections[0].billable, 'matching billable')
+    t.equal('ACCBILLMON-2', booked_selections[0].issue.key, 'matching billing key')
+    t.equal(true, booked_selections[0].issue.id!= undefined, 'has billing id')
 
     let bookings = bookingsInRange(range_from, range_to)
     t.equal(1, bookings.length, 'only one booking created')
@@ -104,9 +113,10 @@ function testBillableIsRecognizedAsAlreadyPresent(_test) {
     let bookings = book_selections(worklogs)
     t.equal(1, bookings.length, 'only one booking created')
     t.equal("ACCBILLMON-3", bookings[0].issue.key, 'correct billing ticket')
+    t.equal(true, bookings[0].issue.id != undefined, 'has id')
 
     let new_worklogs = getWorklogsAsJson(range_from.getTime(), range_to.getTime())
-    check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: "ACCBILLMON-3", billable: true, hour_factor: 1.125, booking_link: bookings[0].originId } }, new_worklogs[0])
+    check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: "ACCBILLMON-3", billable: true, hour_factor: 1.125, booking_link: bookings[0].issue.id } }, new_worklogs[0])
   });
   _test || test.finish()
 }

@@ -13,7 +13,7 @@ class tempoBooking {
     end_date.setHours(time_parts_end[0])
     end_date.setMinutes(time_parts_end[1])
     let duration = (end_date - start_date) / 1000
-    let booking_info = element.booking_info || new bookingInfo()
+    let booking_info = element.booking_info || new BookingInfo()
     
     return new tempoBooking(start_date, duration, element.summary, booking_info)
   }
@@ -25,38 +25,66 @@ class tempoBooking {
     this.booking_info = booking_info
     this.worker_key = worker_key
   }
+}
 
-  toPayloadJson() {
-    // XXX: Tempo Api doesn't recognizes timezones
-    // https://tempo-io.atlassian.net/wiki/spaces/KB/pages/232816644/Why+is+there+a+time+difference+between+my+Jira+worklog+and+my+Tempo+worklog
-    let json_start_time = new Date(this.start_date.getTime() + 60 * 60000)
-    let billingDuration = (this.booking_info.hour_factor * this.duration).toFixed()
-    let payload = {
-      attributes: {
-        _NotBillable_: {
-          name: "Not Billable",
-          workAttributeId: 2,
-          value: !this.booking_info.billable
-        }
-      },
-      billableSeconds: this.booking_info.billable && billingDuration || 0,
-      remainingEstimate: 0,
-      worker: this.worker_key,
-      comment: this.summary,
-      started: json_start_time.toJSON(),
-      timeSpentSeconds: this.duration,
-      originTaskId: this.booking_info.issue_id
-    }
+class TempoBookingWrapperService extends jira.Service {
+  static getInstance() {
+    return new TempoBookingWrapperService(jiraIssueService())
+  }
+  constructor(issueService) {
+    super()
+    this.issueService = issueService
+  }
 
-    if(this.booking_info.account_name) {
-      payload.attributes._Account_ = {
-        name:"Account",
-        workAttributeId:7,
-        value:this.booking_info.account_name
-      }
-    }
-
-    return payload
+  /**
+   * @param {object} tempoBooking
+   * @param {String} tempoBooking.self
+   * @param {integer} tempoBooking.tempoWorklogId
+   * @param {number} tempoBooking.timeSpentSeconds
+   * @param {number} tempoBooking.billableSeconds
+   * @param {String} tempoBooking.description
+   * @param {String} tempoBooking.createdAt
+   * @param {String} tempoBooking.updatedAt
+   * @param {String} tempoBooking.startDate - "YYYY-MM-DD"
+   * @param {String} tempoBooking.startTime - "HH:mm:ss"
+   * @param {object} tempoBooking.issue
+   * @param {String} tempoBooking.issue.self
+   * @param {integer} tempoBooking.issue.id
+   * @param {object} tempoBooking.author
+   * @param {String} tempoBooking.author.self
+   * @param {integer} tempoBooking.author.accountId
+   * @param {object} tempoBooking.attributes
+   * @param {String} tempoBooking.attributes.self
+   * @param {Array} tempoBooking.attributes.values
+   */
+  fromTempo(tempoBooking) {
+    let issueKey = this.issueService.getIssue(tempoBooking.issue.id).key
+    let end_time = moment(tempoBooking.startTime, 'HH:mm:ss').add(tempoBooking.timeSpentSeconds, 'seconds').format('HH:mm:ss')
+    return new TempoBookingWrapper(tempoBooking.startDate, tempoBooking.startTime, end_time, tempoBooking.timeSpentSeconds, tempoBooking.billableSeconds, tempoBooking.description, { id: tempoBooking.tempoWorklogId, key: issueKey })
   }
 }
 
+class TempoBookingWrapper extends entity.Entity {
+  /**
+   * @param {String} date - "YYYY-MM-DD"
+   * @param {String} start_time- "HH:mm:ss"
+   * @param {String} end_time- "HH:mm:ss"
+   * @param {number} timeSpentSeconds
+   * @param {number} billableSeconds
+   * @param {String} comment
+   * @param {object} issue
+   * @param {integer} issue.id
+   * @param {string} issue.key
+   */
+  constructor(date, start_time, end_time, timeSpentSeconds, billableSeconds, comment, issue) {
+    super()
+    this.date = date
+    this.start_time = start_time
+    this.end_time = end_time
+    this.timeSpentSeconds = timeSpentSeconds
+    this.billableSeconds = billableSeconds
+    this.comment = comment
+    this.issue = issue
+    this.billable = billableSeconds > 0
+  }
+}
