@@ -3,3 +3,8 @@ var log = logger.getLog({
   level: logger.Level.INFO,
   useNativeLogger: false
 })
+
+var enableDebugLog = function enableDebugLog() {
+  log.setLevel(logger.Level.FINE)
+  api.log.setLevel(logger.Level.FINE)
+}

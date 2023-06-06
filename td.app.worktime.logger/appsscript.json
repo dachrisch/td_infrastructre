@@ -40,6 +40,11 @@
         "version": "0",
         "libraryId": "1-N9OkafA2sQBYZjSbwtv5QYM7x4bB4DZJ-h2nryF1XPcX2GzNkNKQLnQ",
         "developmentMode": true
+      },
+      {
+        "userSymbol": "logger",
+        "version": "20",
+        "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt"
       }
     ]
   },

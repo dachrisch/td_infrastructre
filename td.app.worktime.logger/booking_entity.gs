@@ -14,7 +14,7 @@ class tempoBooking {
     end_date.setMinutes(time_parts_end[1])
     let duration = (end_date - start_date) / 1000
     let booking_info = element.booking_info || new BookingInfo()
-    
+
     return new tempoBooking(start_date, duration, element.summary, booking_info)
   }
 
@@ -29,7 +29,10 @@ class tempoBooking {
 
 class TempoBookingWrapperService extends jira.Service {
   static getInstance() {
-    return new TempoBookingWrapperService(jiraIssueService())
+    if (!('instance' in TempoBookingWrapperService)) {
+      TempoBookingWrapperService.instance = new TempoBookingWrapperService(jiraIssueService())
+    }
+    return TempoBookingWrapperService.instance
   }
   constructor(issueService) {
     super()
@@ -58,9 +61,18 @@ class TempoBookingWrapperService extends jira.Service {
    * @param {Array} tempoBooking.attributes.values
    */
   fromTempo(tempoBooking) {
+    let l = this.issueService
     let issueKey = this.issueService.getIssue(tempoBooking.issue.id).key
     let end_time = moment(tempoBooking.startTime, 'HH:mm:ss').add(tempoBooking.timeSpentSeconds, 'seconds').format('HH:mm:ss')
-    return new TempoBookingWrapper(tempoBooking.startDate, tempoBooking.startTime, end_time, tempoBooking.timeSpentSeconds, tempoBooking.billableSeconds, tempoBooking.description, { id: tempoBooking.tempoWorklogId, key: issueKey })
+    return new TempoBookingWrapper(tempoBooking.startDate,
+      tempoBooking.startTime,
+      end_time,
+      tempoBooking.timeSpentSeconds,
+      tempoBooking.billableSeconds,
+      tempoBooking.description,
+      issueKey,
+      tempoBooking.tempoWorklogId,
+      tempoBooking.attributes.values)
   }
 }
 
@@ -72,11 +84,11 @@ class TempoBookingWrapper extends entity.Entity {
    * @param {number} timeSpentSeconds
    * @param {number} billableSeconds
    * @param {String} comment
-   * @param {object} issue
-   * @param {integer} issue.id
-   * @param {string} issue.key
+   * @param {string} issueKey
+   * @param {integer} worklogId
+   * @param {object} attributes
    */
-  constructor(date, start_time, end_time, timeSpentSeconds, billableSeconds, comment, issue) {
+  constructor(date, start_time, end_time, timeSpentSeconds, billableSeconds, comment, issueKey, worklogId, attributes) {
     super()
     this.date = date
     this.start_time = start_time
@@ -84,7 +96,9 @@ class TempoBookingWrapper extends entity.Entity {
     this.timeSpentSeconds = timeSpentSeconds
     this.billableSeconds = billableSeconds
     this.comment = comment
-    this.issue = issue
+    this.issueKey = issueKey
+    this.worklogId = worklogId
+    this.attributes = attributes
     this.billable = billableSeconds > 0
   }
 }

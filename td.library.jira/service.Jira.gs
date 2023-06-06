@@ -16,10 +16,14 @@ var JiraMyselfService = class JiraMyselfService extends JiraService {
    */
   constructor(jiraApi) {
     super(jiraApi.on('myself'))
+    this.m = null
   }
 
   getMyself() {
-    return this.jiraApi.fetch()
+    if (!this.m) {
+      this.m = this.jiraApi.fetch()
+    }
+    return this.m
   }
 }
 
@@ -30,11 +34,14 @@ var JiraIssueService = class JiraIssueService extends JiraService {
    */
   constructor(jiraApi) {
     super(jiraApi.on('issue'))
-    //api.log.setLevel(logger.Level.FINE)
+    this.i = {}
   }
 
   getIssue(issueKey) {
-    return this.jiraApi.on(issueKey).fetch()
+    if (!(issueKey in this.i)) {
+      this.i[issueKey] = this.jiraApi.on(issueKey).fetch()
+    }
+    return this.i[issueKey]
   }
 
   /**

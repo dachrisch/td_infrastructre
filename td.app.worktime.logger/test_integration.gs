@@ -43,8 +43,10 @@ function testDefaultBilling(_test) {
     t.equal(28800, booked_selections[0].timeSpentSeconds, 'matching summary')
     t.equal(event.getTitle(), booked_selections[0].comment, 'matching summary')
     t.equal(false, booked_selections[0].billable, 'matching billable')
-    t.equal('ACCBILLMON-2', booked_selections[0].issue.key, 'matching billing key')
-    t.equal(true, booked_selections[0].issue.id!= undefined, 'has billing id')
+    t.equal('ACCBILLMON-2', booked_selections[0].issueKey, 'matching billing key')
+    t.equal(true, booked_selections[0].worklogId!= undefined, 'has billing id')
+    t.equal('_NotBillable_', booked_selections[0].attributes[0].key, 'has non billable attribute')
+    t.equal(true, booked_selections[0].attributes[0].value, 'has non billable attribute = true')
 
     let bookings = bookingsInRange(range_from, range_to)
     t.equal(1, bookings.length, 'only one booking created')
@@ -52,7 +54,7 @@ function testDefaultBilling(_test) {
     t.equal(8 * 60 * 60, bookings[0].timeSpentSeconds, 'spent seconds = 8h')
     t.equal(event.getTitle(), bookings[0].comment, 'matching summary')
     t.equal(false, bookings[0].billable, 'not billable')
-    t.equal("ACCBILLMON-2", bookings[0].issue.key, 'correct billing ticket')
+    t.equal("ACCBILLMON-2", bookings[0].issueKey, 'correct billing ticket')
     t.equal(moment(event.getStartTime()).format('HH:mm:ss'), bookings[0].start_time, 'correct start time')
 
   });
@@ -73,7 +75,7 @@ function testBillingFromDescription(_test) {
     book_selections(worklogs)
     let bookings = bookingsInRange(range_from, range_to)
     t.equal(1, bookings.length, 'only one booking created')
-    t.equal("ACCBILLMON-3", bookings[0].issue.key, 'correct billing ticket')
+    t.equal("ACCBILLMON-3", bookings[0].issueKey, 'correct billing ticket')
 
   });
   _test || test.finish()
@@ -88,10 +90,11 @@ function testBillableBillingFromDescription(_test) {
     event.setDescription('booking://ACCBILLMON-3?billable=true&hourFactor=1.125')
     let worklogs = getWorklogsAsJson(range_from.getTime(), range_to.getTime())
     check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "17:00", summary: "Test Event Nine to Five", booking_info: { issue_key: "ACCBILLMON-3", billable: true, hour_factor: 1.125 } }, worklogs[0])
-    book_selections(worklogs)
+    let booked_selections = book_selections(worklogs)
+    t.equal(0, booked_selections[0].attributes.length, 'has non billable attribute not set')
     let bookings = bookingsInRange(range_from, range_to)
     t.equal(1, bookings.length, 'only one booking created')
-    t.equal("ACCBILLMON-3", bookings[0].issue.key, 'correct billing ticket')
+    t.equal("ACCBILLMON-3", bookings[0].issueKey, 'correct billing ticket')
     t.equal(bookings[0].timeSpentSeconds * 1.125, bookings[0].billableSeconds, 'spent seconds with factor')
     t.equal(true, bookings[0].billable, 'is billable')
 
@@ -112,11 +115,11 @@ function testBillableIsRecognizedAsAlreadyPresent(_test) {
 
     let bookings = book_selections(worklogs)
     t.equal(1, bookings.length, 'only one booking created')
-    t.equal("ACCBILLMON-3", bookings[0].issue.key, 'correct billing ticket')
-    t.equal(true, bookings[0].issue.id != undefined, 'has id')
+    t.equal("ACCBILLMON-3", bookings[0].issueKey, 'correct billing ticket')
+    t.equal(true, bookings[0].worklogId != undefined, 'has id')
 
     let new_worklogs = getWorklogsAsJson(range_from.getTime(), range_to.getTime())
-    check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: "ACCBILLMON-3", billable: true, hour_factor: 1.125, booking_link: bookings[0].issue.id } }, new_worklogs[0])
+    check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: "ACCBILLMON-3", billable: true, hour_factor: 1.125, booking_link: bookings[0].worklogId } }, new_worklogs[0])
   });
   _test || test.finish()
 }

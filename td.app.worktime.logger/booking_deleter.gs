@@ -4,6 +4,6 @@ function deleteBookingsById(bookings) {
 }
 
 function deleteBooking(booking) {
-  tempoDeleteService().delete(booking.issue.id)
+  tempoDeleteService().delete(booking.worklogId)
   return booking
 }
