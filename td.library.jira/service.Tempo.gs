@@ -74,11 +74,29 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
   }
 }
 
+class TempoAccountsService extends TempoService {
+  constructor(tempoApi) {
+    super(tempoApi.on('accounts'))
+    this.a = {}
+  }
+
+  fromFields(fields) {
+    let accountFieldId = fields[TempoAccountsService.accountField].id
+    if (!(accountFieldId in this.a)) {
+      this.a[accountFieldId] = this.tempoApi.on(accountFieldId).fetch()
+    }
+    return this.a[accountFieldId]
+  }
+}
+
+TempoAccountsService.accountField = 'io.tempo.jira__account'
+
 var TempoWorklogBookService = class TempoWorklogBookService extends TempoService {
   constructor(tempoApi, jiraApi) {
     super(tempoApi.on('worklogs'))
     this.jiraIssueService = new JiraIssueService(jiraApi)
     this.jiraMyselfService = new JiraMyselfService(jiraApi)
+    this.tempoAccountService = new TempoAccountsService(tempoApi)
   }
 
   /**
@@ -88,9 +106,10 @@ var TempoWorklogBookService = class TempoWorklogBookService extends TempoService
    */
   book(event) {
     log.info(`booking ${event}`)
+    let issue = this.jiraIssueService.getIssue(event.bookingInfo.issueKey, [TempoAccountsService.accountField])
     let payload = {
       authorAccountId: this.jiraMyselfService.getMyself().accountId,
-      issueId: this.jiraIssueService.getIssue(event.bookingInfo.issueKey).id,
+      issueId: issue.id,
       description: event.title,
       startDate: event.startMoment.format("YYYY-MM-DD"),
       startTime: event.startMoment.format("HH:mm:ss"),
@@ -102,6 +121,11 @@ var TempoWorklogBookService = class TempoWorklogBookService extends TempoService
       payload.billableSeconds = event.billingDuration()
     } else {
       payload.attributes.push({ key: '_NotBillable_', value: true })
+    }
+    if (issue.fields[TempoAccountsService.accountField] && 'value' in issue.fields[TempoAccountsService.accountField]) {
+      // assign default account to issue
+      let accountKey = this.tempoAccountService.fromFields(issue.fields).key
+      payload.attributes.push({ key: '_Account_', value: accountKey })
     }
     log.fine(`booking ${event} with payload ${payload}`)
     let result = this.tempoApi.post(payload)

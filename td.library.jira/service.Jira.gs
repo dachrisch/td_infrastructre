@@ -37,9 +37,12 @@ var JiraIssueService = class JiraIssueService extends JiraService {
     this.i = {}
   }
 
-  getIssue(issueKey) {
+  getIssue(issueKey, fields) {
     if (!(issueKey in this.i)) {
-      this.i[issueKey] = this.jiraApi.on(issueKey).fetch()
+      this.i[issueKey] = this.jiraApi.on(issueKey).fetchWithParams({
+        fields: fields,
+        properties: 'key'
+      })
     }
     return this.i[issueKey]
   }
