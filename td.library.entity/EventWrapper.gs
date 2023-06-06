@@ -62,4 +62,9 @@ var EventWrapper = class EventWrapper extends Entity {
     }
     return bd
   }
+
+  updateBookingInfo(issueKey, billable, hourFactor) {
+    let updatedEvent = new EventWrapper(this.startMoment, this.endMoment, this.title, new BookingInfo(issueKey, billable, hourFactor), this.eventId)
+    return updatedEvent
+  }
 }

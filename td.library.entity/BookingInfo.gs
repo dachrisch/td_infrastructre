@@ -1,4 +1,4 @@
-class BookingInfo extends Entity {
+var BookingInfo = class BookingInfo extends Entity {
   static BOOKING_PARAMS() {
     return {
       protocol: 'booking',
@@ -38,4 +38,10 @@ class BookingInfo extends Entity {
     this.hourFactor = hourFactor
     this.bookingLink = bookingLink
   }
+
+  toDescription() {
+    let newDescription = `${BookingInfo.BOOKING_PARAMS().protocol}://${this.issueKey}?${BookingInfo.BOOKING_PARAMS().billable}=${this.billable}&${BookingInfo.BOOKING_PARAMS().hourFactor}=${this.hourFactor}`
+    return newDescription
+  }
+  
 }

@@ -1,23 +1,36 @@
 
 function loadCalendars() {
-  return CalendarApp.getAllOwnedCalendars().map(cal => { return { name: cal.getName(), id: cal.getId(), active: cal.getId() == getActiveCalendar().getId() } })
+  return calendarWrapper().all().map(cal => { return { name: cal.name, id: cal.id, active: cal.id == getActiveCalendar().id } })
 }
 
 function setActiveCalendar(cal_id) {
-  UserProperties.setProperties({ active_calendar: cal_id })
+  PropertiesService.getUserProperties().setProperties({ active_calendar: cal_id })
 }
 
 function getActiveCalendar() {
-  let cal_id = UserProperties.getProperty('active_calendar')
-  let calendar = CalendarApp.getCalendarById(cal_id)
+  let cal_id = PropertiesService.getUserProperties().getProperty('active_calendar')
+  let calendar= calendarWrapper().getDefault()
+  try {
+    calendar = calendarWrapper().byId(cal_id)
+  } catch (e) {
+    if (e instanceof cWrap.CalendarError) {
+      // pass (use default)
+    } else {
+      throw e
+    }
+  }
 
-  return calendar || CalendarApp.getDefaultCalendar()
+  return calendar
 }
 
 function getCalendarByName(name) {
-  return CalendarApp.getCalendarsByName(name)[0]
+  return calendarWrapper().byName(name)
 }
 
 function test_cal() {
   console.log(getCalendarByName('c.daehn@techdivision.com'))
+}
+
+function calendarWrapper() {
+  return new cWrap.CalendarAppWrapper()
 }

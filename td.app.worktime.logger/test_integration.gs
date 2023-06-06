@@ -17,6 +17,7 @@ function integrationTestRunner(_test) {
   testBillableBillingFromDescription(test)
   testBillableIsRecognizedAsAlreadyPresent(test)
   testConfigureBillable(test)
+  testCalendarEvents(test)
   _test || test.finish()
 }
 
@@ -120,9 +121,9 @@ function testConfigureBillable(_test) {
 
     let configured_worklog = configure_selections(worklogs, 'ACCBILLTEST-1', true, 1.125)
     check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: 'ACCBILLTEST-1', billable: true, hour_factor: 1.125 } }, configured_worklog[0], 'after configure_selections')
-    let updated_event = CalendarApp.getEventById(event.getId())
+    let updated_event = calendarWrapper().getDefault().getEventById(event.getId())
     let updated_worklog = worklog.fromEvent(updated_event)
-    check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: 'ACCBILLTEST-1', billable: true, hour_factor: 1.125 } }, updated_worklog.toJson(), 'from calendar configured')
+    check_object_matches(t, { date: "04.06.1970", start_time: "09:00", end_time: "10:35", summary: "Test Event Nine to Five", booking_info: { issue_key: 'ACCBILLTEST-1', billable: true, hour_factor: 1.125 } }, updated_worklog, 'from calendar configured')
 
   });
   _test || test.finish()
