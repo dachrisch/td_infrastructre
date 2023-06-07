@@ -1,0 +1,21 @@
+{
+  "timeZone": "Europe/Berlin",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "cWrap",
+        "libraryId": "1-N9OkafA2sQBYZjSbwtv5QYM7x4bB4DZJ-h2nryF1XPcX2GzNkNKQLnQ",
+        "version": "0",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "t",
+        "libraryId": "1WA9kpPX38p9xJq6a6AYQfqY5JnvTel6V_Ng-W5a3OPKmuszuTCoecjlb",
+        "version": "0",
+        "developmentMode": true
+      }
+    ]
+  }
+}

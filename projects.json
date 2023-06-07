@@ -62,5 +62,17 @@
   {
     "projectId": "1fyevOThlnzrI-pWzzkkiJ3invniS_M0jOSBTX2Wol0wBp4majHFUeywo",
     "projectName": "td.library.token"
+  },
+  {
+    "projectId": "1snqmPYz46Sh785y-x0kwxXq3qhYBA9yaLSjOlSJiIHuQhQgw97jAEFUw",
+    "projectName": "td.library.worktime"
+  },
+  {
+    "projectId": "1pMEtvgf9ZnrG2MTIjOdOtFm_cjGeeEJL31bTNc-Qp5bgaokI3WWKkT7W",
+    "projectName": "td.connect.worktime"
+  },
+  {
+    "projectId": "1WA9kpPX38p9xJq6a6AYQfqY5JnvTel6V_Ng-W5a3OPKmuszuTCoecjlb",
+    "projectName": "td.library.telemetry"
   }
 ]

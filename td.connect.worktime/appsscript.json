@@ -1,0 +1,21 @@
+{
+  "timeZone": "Europe/Berlin",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "wt",
+        "version": "0",
+        "libraryId": "1snqmPYz46Sh785y-x0kwxXq3qhYBA9yaLSjOlSJiIHuQhQgw97jAEFUw",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "sw",
+        "version": "0",
+        "libraryId": "1fFe0y-0iWKb_i8Jt_tZOaz3zejpQy3JgPZcKyGLKn9heQpVLpPUxt7vs",
+        "developmentMode": true
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

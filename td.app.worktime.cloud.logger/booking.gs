@@ -28,7 +28,7 @@ function bookWorklogs(then, now, calendars) {
   let worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
   let worklogsBookService = new jira.TempoWorklogBookService(tempoApi, jiraApi)
 
-  let telemetry = Telemetry.forSeries('book_worklogs')
+  let telemetry = t.Telemetry.forSeries('book_worklogs')
   telemetry.start()
 
   calendars.forEach((calendar) => {
