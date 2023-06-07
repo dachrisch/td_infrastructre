@@ -24,18 +24,24 @@ class CalendarInstanceWrapper extends entity.Entity {
    * @see @link https://script.google.com/home/projects/1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM
    */
   getEvents(fromMoment, toMoment) {
-    return this.calendar.getEvents(new Date(fromMoment), new Date(toMoment)).map(entity.EventWrapper.fromEvent)
+    log.fine(`getting events ${fromMoment} - ${toMoment}`)
+    let events = this.calendar.getEvents(fromMoment.toDate(), toMoment.toDate()).map(entity.EventWrapper.fromEvent)
+    log.finest(`getting events ${fromMoment} - ${toMoment}: ${events}`)
+    return events
   }
 
   /**
    * @param {string} eventId
    */
   getEventById(eventId) {
+    log.fine(`getting event ${eventId}`)
     let calendarEvent = this.calendar.getEventById(eventId)
     if (!calendarEvent) {
       throw new CalendarError(this, `couldn't find event by id: ${eventId}`)
     }
-    return entity.EventWrapper.fromEvent(calendarEvent)
+    let event = entity.EventWrapper.fromEvent(calendarEvent)
+    log.finest(`getting event ${eventId}: ${event}`)
+    return event
   }
 
   /**
@@ -48,6 +54,7 @@ class CalendarInstanceWrapper extends entity.Entity {
 
    */
   saveEvent(event) {
+    log.fine(`saving event ${event}`)
     let calendarEvent = this.calendar.getEventById(event.eventId)
     if (!calendarEvent) {
       // maybe not in this calendar
@@ -63,6 +70,8 @@ class CalendarInstanceWrapper extends entity.Entity {
       newDescription += '\n' + oldDescription
     }
     calendarEvent.setDescription(newDescription.trim())
+    log.finest(`saved description [${newDescription}] for ${event}`)
+
     return event
   }
 }

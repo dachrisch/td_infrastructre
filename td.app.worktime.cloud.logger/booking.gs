@@ -1,8 +1,9 @@
-function bookLast30days(numLastDays = 30) {
+function bookLast30days() {
+  let numLastDays = 30
   let now = moment()
-  let then = moment().subtract(numLastDays, 'days')
-
+  let then = now.subtract(numLastDays, 'days')
   let googleCalendar = new cWrap.CalendarAppWrapper()
+
   bookWorklogs(then, now, googleCalendar.all())
 }
 
@@ -12,7 +13,7 @@ function bookLast30days(numLastDays = 30) {
  * @param {Array.<CalendarInstanceWrapper>} calendars
  */
 function bookWorklogs(then, now, calendars) {
-  let username = 'c.daehn@techdivision.com'
+  let username = Session.getActiveUser().getEmail()
   let jiraApi = null
   let tempoApi = null
   if (globalTest) {
@@ -31,15 +32,18 @@ function bookWorklogs(then, now, calendars) {
   telemetry.start()
 
   calendars.forEach((calendar) => {
-    log.info(`checking ${calendar}`)
+    log.info(`checking ${calendar} from [${then}] to [${now}]`)
     let calendarEvents = calendar.getEvents(then, now)
-    log.fine(`Events in calendar ${calendarEvents.length}`)
+    log.fine(`${calendarEvents.length} events in calendar ${calendar}`)
     let withBookingInfo = calendarEvents.filter(entity.EventWrapper.withBookingInfo)
     log.fine(`Events with Booking info ${withBookingInfo.length}`)
+    withBookingInfo.forEach((e) => log.finest(e))
     let withValidKeys = withBookingInfo.filter((event) => issuesService.hasValidKey(event))
     log.fine(`Events with valid keys ${withValidKeys.length}`)
+    withValidKeys.forEach((e) => log.finest(e))
     let bookable = withValidKeys.filter((event) => worklogsSearchService.hasNoBooking(event))
-    log.info(`${bookable.length} Events without existing bookings: ${bookable}`)
+    log.info(`${bookable.length} Events without existing bookings`)
+     bookable.forEach((e)=> log.info(e))
     telemetry.count(bookable.length, `${calendar.name}: ${bookable.length}`)
     bookable.forEach((event) => {
       worklogsBookService.book(event)
