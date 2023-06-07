@@ -46,6 +46,11 @@ var ApiConnector = class ApiConnector {
     return new ApiConnector(((part == undefined) ? this.endpoint : (this.endpoint + '/' + part)), this.authorizationProvider)
   }
 
+  withParams(params) {
+    log.fine(`with ${params}`)
+    return new ApiConnector(this.endpoint.addQuery(params), this.authorizationProvider)
+  }
+
   post(json_payload, expectedResponseCode = 200) {
     let options = {
       headers: this.authorizationProvider.authHeaders(),
@@ -58,11 +63,7 @@ var ApiConnector = class ApiConnector {
     return this.validatedFetch(this.endpoint, options, expectedResponseCode)
   }
 
-  fetch() {
-    return this.fetchWithParams()
-  }
-
-  fetchWithParams(params, expectedResponseCode = 200) {
+  fetch(expectedResponseCode = 200) {
     let options = {
       headers: this.authorizationProvider.authHeaders(),
       method: 'get',
@@ -70,10 +71,12 @@ var ApiConnector = class ApiConnector {
       muteHttpExceptions: true
     };
 
-    let queryEndpoint = this.endpoint.addQuery(params)
-    return this.validatedFetch(queryEndpoint, options, expectedResponseCode)
+    return this.validatedFetch(this.endpoint, options, expectedResponseCode)
   }
 
+  fetchWithParams(params, expectedResponseCode = 200) {
+    return this.withParams(params).fetch(expectedResponseCode)
+  }
 
   validatedFetch(endpoint, options, expectedResponseCode) {
     log.fine(`about to [${options.method.toUpperCase()}] [${endpoint}] with ${JSON.stringify(options)}`)

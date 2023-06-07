@@ -32,8 +32,7 @@
         <th data-field="comment" data-filter-control="input">Summary</th>
         <th data-field="booking_issue" data-filter-control="select" data-formatter="bookingIssueFormatter">Booking
           Ticket</th>
-        <th data-field="booking_summary" data-filter-control="select" data-formatter="bookingSummaryFormatter">Booking
-          Summary</th>
+        <th data-field="booking_summary" data-filter-control="select" data-formatter="bookingSummaryFormatter">Booked billable/unbillable</th>
         <th data-field="billable" data-filter-control="select" data-formatter="billableFormatter">Billable</th>
       </tr>
     </thead>
@@ -111,6 +110,10 @@
 
   function endTimeFormatter(value, row) {
     return moment(row.end_time, 'HH:mm:ss').format('HH:mm')
+  }
+
+  function bookingSummaryFormatter(value, row) {
+    return `${(row.billableSeconds / 60 / 60).toFixed(2)}h/${(row.timeSpentSeconds / 60 / 60).toFixed(2)}h`
   }
 
 </script>

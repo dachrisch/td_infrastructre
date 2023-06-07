@@ -20,6 +20,18 @@
         "userSymbol": "BBLog",
         "version": "20",
         "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt"
+      },
+      {
+        "userSymbol": "prop",
+        "version": "0",
+        "libraryId": "1fyevOThlnzrI-pWzzkkiJ3invniS_M0jOSBTX2Wol0wBp4majHFUeywo",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "jira",
+        "version": "0",
+        "libraryId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
+        "developmentMode": true
       }
     ]
   }

@@ -32,3 +32,11 @@ function eventCheck() {
     throw `invalid dates: ${event}`
   }
 }
+
+function bookFromTo() {
+  let then = moment('01-05-2023', 'DD-MM-YYYY')
+  let now = moment()
+  let googleCalendar = new cWrap.CalendarAppWrapper()
+
+  bookWorklogs(then, now, googleCalendar.all())
+}

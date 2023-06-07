@@ -1,16 +1,15 @@
 const Billing = class Billing {
   static fromJson(json) {
-    let fromDate = moment(json.started)
+    let fromDate = moment(`${json.startDate} ${json.startTime}`, 'YYYY-MM-DD HH:mm:ss')
     let toDate = fromDate.clone().add(json.timeSpentSeconds, 'seconds')
-    return new Billing(fromDate, toDate, json.comment, json.billableSeconds, json.issue.key)
+    return new Billing(fromDate, toDate, json.description, json.billableSeconds)
   }
 
-  constructor(fromDate, toDate, description, billableSeconds, billingKey) {
+  constructor(fromDate, toDate, description, billableSeconds) {
     this.fromDate = fromDate
     this.toDate = toDate
     this.description = description
     this.billableSeconds = billableSeconds
-    this.billingKey = billingKey
   }
 
   quarter() {

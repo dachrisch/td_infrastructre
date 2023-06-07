@@ -62,15 +62,32 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
    * @param {moment} endMoment
    */
   bookingsInTimerange(startMoment, endMoment) {
-    log.fine(`get bookings from ${startMoment} to ${endMoment}`)
-    let bookingsInRange = this.tempoApi.post({
-      from: startMoment.format("YYYY-MM-DD"),
-      to: endMoment.format("YYYY-MM-DD"),
-      authorIds: [this.jiraMyselfService.getMyself().accountId]
-    }).results
-    log.finest(`found ${bookingsInRange.length} bookings on day of event`)
+    log.info(`get bookings from ${startMoment} to ${endMoment}`)
+    let bookingsInRange = this.unpagedSearch(startMoment.format("YYYY-MM-DD"),
+      endMoment.format("YYYY-MM-DD"),
+      [this.jiraMyselfService.getMyself().accountId]
+    )
 
+    log.fine(`found ${bookingsInRange.length} bookings on day of event`)
     return bookingsInRange
+  }
+
+  unpagedSearch(_from, _to, authorIds, offset = 0, limit = 50) {
+    let complete = []
+    log.finest(`searching page [${offset}, ${offset + limit}]`)
+    let bookingSearch = this.tempoApi.withParams({
+      offset: offset,
+      limit: limit
+    }).post({
+      from: _from,
+      to: _to,
+      authorIds: authorIds
+    })
+    complete.push(...bookingSearch.results)
+    if ('next' in bookingSearch.metadata) {
+      complete.push(...this.unpagedSearch(_from, _to, authorIds, offset + limit, limit))
+    }
+    return complete
   }
 }
 

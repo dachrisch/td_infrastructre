@@ -1,4 +1,4 @@
-function testAll() {
+function allTests() {
   for (const this_function in this) {
     if (this[this_function] instanceof Function && this_function.startsWith('test')) {
       console.log(`running test ${this_function}`)
@@ -10,7 +10,7 @@ function testAll() {
 
 function testScriptProperties() {
   PropertiesService.getScriptProperties().setProperty('test1', '')
-  let sp = new ScriptProperties()
+  let sp = new ScripPropGetter()
   console.log(`${sp}`)
   let rand = Math.floor(Math.random() * 1000)
   PropertiesService.getScriptProperties().setProperty('test1', rand)
@@ -23,7 +23,7 @@ function testScriptProperties() {
 
 function testUserProperties() {
   PropertiesService.getUserProperties().setProperty('test1', '')
-  let sp = new UserProperties()
+  let sp = new UserPropGetter()
   console.log(`${sp}`)
   let rand = Math.floor(Math.random() * 1000)
   PropertiesService.getUserProperties().setProperty('test1', rand)

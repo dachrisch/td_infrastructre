@@ -1,7 +1,7 @@
 function bookLast30days() {
   let numLastDays = 30
   let now = moment()
-  let then = now.subtract(numLastDays, 'days')
+  let then = now.clone().subtract(numLastDays, 'days')
   let googleCalendar = new cWrap.CalendarAppWrapper()
 
   bookWorklogs(then, now, googleCalendar.all())

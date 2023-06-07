@@ -1,7 +1,7 @@
 var log = logger.getLog({
   sheetId: null,
   level: logger.Level.INFO,
-  useNativeLogger: false
+  useNativeLogger: true
 })
 
 var enableDebugLog = function enableDebugLog() {

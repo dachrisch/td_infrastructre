@@ -24,9 +24,9 @@ class CalendarInstanceWrapper extends entity.Entity {
    * @see @link https://script.google.com/home/projects/1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM
    */
   getEvents(fromMoment, toMoment) {
-    log.fine(`getting events ${fromMoment} - ${toMoment}`)
+    log.info(`getting events ${fromMoment} - ${toMoment}`)
     let events = this.calendar.getEvents(fromMoment.toDate(), toMoment.toDate()).map(entity.EventWrapper.fromEvent)
-    log.finest(`getting events ${fromMoment} - ${toMoment}: ${events}`)
+    log.fine(`getting events ${fromMoment} - ${toMoment}: ${events}`)
     return events
   }
 

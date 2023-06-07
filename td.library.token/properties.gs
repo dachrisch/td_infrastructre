@@ -1,4 +1,4 @@
-class Properties extends entity.Entity {
+class PropGetter extends entity.Entity {
   constructor(properties) {
     super()
     this.properties = properties
@@ -22,14 +22,14 @@ class Properties extends entity.Entity {
   }
 }
 
-var ScriptProperties = class ScriptProperties extends Properties {
+var ScripPropGetter = class ScripPropGetter extends PropGetter {
   constructor() {
     super(PropertiesService.getScriptProperties())
   }
 }
 
 
-var UserProperties = class UserProperties extends Properties {
+var UserPropGetter = class UserPropGetter extends PropGetter {
   constructor() {
     super(PropertiesService.getUserProperties())
   }
