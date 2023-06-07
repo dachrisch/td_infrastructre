@@ -19,7 +19,7 @@ class BearerAuthorizationProvider extends AuthorizationProvider {
 class BasicAuthorizationProvider extends AuthorizationProvider {
   constructor(username, authToken) {
     super()
-    this.username=username
+    this.username = username
     this.authToken = authToken
   }
   authHeaders() {
