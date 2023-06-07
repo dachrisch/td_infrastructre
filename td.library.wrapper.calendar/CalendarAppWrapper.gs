@@ -32,6 +32,7 @@ var CalendarAppWrapper = class CalendarAppWrapper extends entity.Entity {
     }
     let calendar = CalendarInstanceWrapper.fromApp(calendarById)
     log.finest(`getting calendar ${_id}: ${calendar}`)
+    return calendar
   }
 
   getDefault() {

@@ -13,33 +13,33 @@
     "libraries": [
       {
         "userSymbol": "sw",
-        "version": "0",
+        "version": "3",
         "libraryId": "1fFe0y-0iWKb_i8Jt_tZOaz3zejpQy3JgPZcKyGLKn9heQpVLpPUxt7vs",
-        "developmentMode": true
+        "developmentMode": false
       },
       {
         "userSymbol": "jira",
-        "version": "0",
+        "version": "4",
         "libraryId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
-        "developmentMode": true
+        "developmentMode": false
       },
       {
         "userSymbol": "api",
-        "version": "0",
+        "version": "2",
         "libraryId": "1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-",
-        "developmentMode": true
+        "developmentMode": false
       },
       {
         "userSymbol": "entity",
-        "version": "0",
+        "version": "1",
         "libraryId": "1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM",
-        "developmentMode": true
+        "developmentMode": false
       },
       {
         "userSymbol": "cWrap",
-        "version": "0",
+        "version": "1",
         "libraryId": "1-N9OkafA2sQBYZjSbwtv5QYM7x4bB4DZJ-h2nryF1XPcX2GzNkNKQLnQ",
-        "developmentMode": true
+        "developmentMode": false
       },
       {
         "userSymbol": "logger",

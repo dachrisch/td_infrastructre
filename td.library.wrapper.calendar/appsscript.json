@@ -4,9 +4,9 @@
     "libraries": [
       {
         "userSymbol": "entity",
-        "version": "0",
+        "version": "1",
         "libraryId": "1R83PIhOu4_HmnP2OHGSuHYdntwm7wYWjCn88URTDGauD5LVwTVSgkdAM",
-        "developmentMode": true
+        "developmentMode": false
       },
       {
         "userSymbol": "logger",

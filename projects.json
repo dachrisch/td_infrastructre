@@ -61,7 +61,7 @@
   },
   {
     "projectId": "1fyevOThlnzrI-pWzzkkiJ3invniS_M0jOSBTX2Wol0wBp4majHFUeywo",
-    "projectName": "td.library.token"
+    "projectName": "td.library.properties"
   },
   {
     "projectId": "1snqmPYz46Sh785y-x0kwxXq3qhYBA9yaLSjOlSJiIHuQhQgw97jAEFUw",
@@ -70,6 +70,10 @@
   {
     "projectId": "1pMEtvgf9ZnrG2MTIjOdOtFm_cjGeeEJL31bTNc-Qp5bgaokI3WWKkT7W",
     "projectName": "td.connect.worktime"
+  },
+  {
+    "projectId": "1_Vg5wO2-a99l8idz4CWw_qh0lWDQoSA4jAYi5stUvFJHSuY-NNXkRoZd",
+    "projectName": "td.connect.billings"
   },
   {
     "projectId": "1WA9kpPX38p9xJq6a6AYQfqY5JnvTel6V_Ng-W5a3OPKmuszuTCoecjlb",
