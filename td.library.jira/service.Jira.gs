@@ -16,14 +16,14 @@ var JiraMyselfService = class JiraMyselfService extends JiraService {
    */
   constructor(jiraApi) {
     super(jiraApi.on('myself'))
-    this.m = null
+    this._cache = new Cache()
   }
 
   getMyself() {
-    if (!this.m) {
-      this.m = this.jiraApi.fetch()
+    if (!this._cache.has('myself')) {
+      this._cache.set('myself', this.jiraApi.fetch())
     }
-    return this.m
+    return this._cache.get('myself')
   }
 }
 
@@ -34,17 +34,20 @@ var JiraIssueService = class JiraIssueService extends JiraService {
    */
   constructor(jiraApi) {
     super(jiraApi.on('issue'))
-    this.i = {}
+    this._cache = new Cache()
   }
 
-  getIssue(issueKey, fields) {
-    if (!(issueKey in this.i)) {
-      this.i[issueKey] = this.jiraApi.on(issueKey).fetchWithParams({
+  getIssue(issueKey, fields = []) {
+    log.fine(` getting ${issueKey} with fields [${fields}]`)
+    if (!(this._cache.has(issueKey))) {
+      log.finest(` ${issueKey} not in cache...getting`)
+      this._cache.set(issueKey, this.jiraApi.on(issueKey).fetchWithParams({
         fields: fields,
         properties: 'key'
-      })
+      }))
     }
-    return this.i[issueKey]
+    log.finest(`issue for ${issueKey}: ${JSON.stringify(this._cache.get(issueKey))}`)
+    return this._cache.get(issueKey)
   }
 
   /**

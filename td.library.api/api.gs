@@ -47,7 +47,7 @@ var ApiConnector = class ApiConnector {
   }
 
   withParams(params) {
-    log.fine(`with ${params}`)
+    log.fine(`with ${JSON.stringify(params)}`)
     return new ApiConnector(this.endpoint.addQuery(params), this.authorizationProvider)
   }
 

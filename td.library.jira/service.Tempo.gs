@@ -20,6 +20,7 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
     super(tempoApi.on('worklogs/search'))
     this.jiraIssueService = new JiraIssueService(jiraApi)
     this.jiraMyselfService = new JiraMyselfService(jiraApi)
+    this._cache = new Cache()
   }
 
   /**
@@ -37,12 +38,12 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
    */
   bookingsForEvent(event) {
     log.fine(`get bookings for ${event}`)
-    let bookingsOnDay = this.tempoApi.post({
-      from: event.startMoment.format("YYYY-MM-DD"),
-      to: event.endMoment.format("YYYY-MM-DD"),
-      issueIds: [this.jiraIssueService.getIssue(event.bookingInfo.issueKey).id],
-      authorIds: [this.jiraMyselfService.getMyself().accountId]
-    }).results
+    let bookingsOnDay = this.unpagedSearch(
+      event.startMoment.format("YYYY-MM-DD"),
+      event.endMoment.format("YYYY-MM-DD"),
+      [this.jiraMyselfService.getMyself().accountId],
+      [this.jiraIssueService.getIssue(event.bookingInfo.issueKey).id]
+    )
     log.finest(`found ${bookingsOnDay.length} bookings on day of event`)
     let matchingBooking = bookingsOnDay.filter((result) => {
       let matchingTitle = result.description == event.title
@@ -72,20 +73,29 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
     return bookingsInRange
   }
 
-  unpagedSearch(_from, _to, authorIds, offset = 0, limit = 50) {
+  unpagedSearch(_from, _to, authorIds, issueIds = [], offset = 0, limit = 50) {
     let complete = []
     log.finest(`searching page [${offset}, ${offset + limit}]`)
-    let bookingSearch = this.tempoApi.withParams({
-      offset: offset,
-      limit: limit
-    }).post({
+    let searchPayload = {
       from: _from,
       to: _to,
-      authorIds: authorIds
-    })
+      authorIds: authorIds,
+      issueIds: issueIds
+    }
+    if (!(this._cache.has(searchPayload))) {
+      log.finest(`${JSON.stringify(searchPayload)} not in cache...getting`)
+      this._cache.set(searchPayload, this.tempoApi.withParams({
+        offset: offset,
+        limit: limit
+      }).post(searchPayload))
+    } else {
+      log.finest(`getting ${JSON.stringify(searchPayload)} from cache`)
+    }
+    let bookingSearch = this._cache.get(searchPayload)
+
     complete.push(...bookingSearch.results)
     if ('next' in bookingSearch.metadata) {
-      complete.push(...this.unpagedSearch(_from, _to, authorIds, offset + limit, limit))
+      complete.push(...this.unpagedSearch(_from, _to, authorIds, issueIds, offset + limit, limit))
     }
     return complete
   }
@@ -94,15 +104,15 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
 class TempoAccountsService extends TempoService {
   constructor(tempoApi) {
     super(tempoApi.on('accounts'))
-    this.a = {}
+    this.a = new Cache()
   }
 
   fromFields(fields) {
     let accountFieldId = fields[TempoAccountsService.accountField].id
-    if (!(accountFieldId in this.a)) {
-      this.a[accountFieldId] = this.tempoApi.on(accountFieldId).fetch()
+    if (!(this.a.has(accountFieldId))) {
+      this.a.set(accountFieldId, this.tempoApi.on(accountFieldId).fetch())
     }
-    return this.a[accountFieldId]
+    return this.a.get(accountFieldId)
   }
 }
 

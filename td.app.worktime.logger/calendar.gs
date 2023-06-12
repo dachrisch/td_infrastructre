@@ -9,7 +9,6 @@ function setActiveCalendar(cal_id) {
 
 function getActiveCalendar() {
   let calId = PropertiesService.getUserProperties().getProperty('active_calendar')
-  console.log(`from property ${calId}`)
   let calendar= calendarWrapper().getDefault()
   try {
     calendar = calendarWrapper().byId(calId)

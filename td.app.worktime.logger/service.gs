@@ -1,5 +1,4 @@
 const tempoApi = memoize(function tempoApi() {
-  api.log.setLevel(logger.Level.FINE)
 
   let tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), userProperty(tempoToken()))
   return tempoApi

@@ -19,13 +19,13 @@
       },
       {
         "userSymbol": "jira",
-        "version": "4",
+        "version": "7",
         "libraryId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
         "developmentMode": false
       },
       {
         "userSymbol": "api",
-        "version": "2",
+        "version": "3",
         "libraryId": "1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-",
         "developmentMode": false
       },
@@ -37,7 +37,7 @@
       },
       {
         "userSymbol": "cWrap",
-        "version": "1",
+        "version": "2",
         "libraryId": "1-N9OkafA2sQBYZjSbwtv5QYM7x4bB4DZJ-h2nryF1XPcX2GzNkNKQLnQ",
         "developmentMode": false
       },

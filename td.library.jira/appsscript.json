@@ -1,26 +1,24 @@
 {
   "timeZone": "America/New_York",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "libraries": [
       {
         "userSymbol": "logger",
-        "version": "20",
-        "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt"
+        "libraryId": "1kzzYZhgODZluRmjsjh7t3O-ftmFAF9h1jaRHU0rOdf9irF0VUiJW33Kt",
+        "version": "20"
       },
       {
         "userSymbol": "api",
-        "version": "2",
         "libraryId": "1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-",
-        "developmentMode": false
+        "version": "3"
       },
       {
         "userSymbol": "prop",
-        "version": "1",
         "libraryId": "1fyevOThlnzrI-pWzzkkiJ3invniS_M0jOSBTX2Wol0wBp4majHFUeywo",
-        "developmentMode": false
+        "version": "1"
       }
     ]
-  },
-  "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  }
 }
