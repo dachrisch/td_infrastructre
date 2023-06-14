@@ -21,7 +21,7 @@ function tempoTest() {
   let tempoApi = api.createBearer(scriptProps.tempoEndpoint, scriptProps.tempoToken)
   let searchService = new TempoWorklogSearchService(tempoApi, jiraApi)
 
-  searchService.bookingsInTimerange(moment().subtract(1, 'week'), moment())
+  searchService.bookingsInTimerange(moment('01.06.2022', 'DD.MM.YYYY'), moment())
   console.log(searchService.bookingsInTimerange(moment().subtract(1, 'week'), moment()))
 }
 

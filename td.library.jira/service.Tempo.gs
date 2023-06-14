@@ -82,16 +82,17 @@ var TempoWorklogSearchService = class TempoWorklogSearchService extends TempoSer
       authorIds: authorIds,
       issueIds: issueIds
     }
-    if (!(this._cache.has(searchPayload))) {
+    let key = {offset: offset, payload: searchPayload}
+    if (!(this._cache.has(key))) {
       log.finest(`${JSON.stringify(searchPayload)} not in cache...getting`)
-      this._cache.set(searchPayload, this.tempoApi.withParams({
+      this._cache.set(key, this.tempoApi.withParams({
         offset: offset,
         limit: limit
       }).post(searchPayload))
     } else {
-      log.finest(`getting ${JSON.stringify(searchPayload)} from cache`)
+      log.finest(`getting ${JSON.stringify(key)} from cache`)
     }
-    let bookingSearch = this._cache.get(searchPayload)
+    let bookingSearch = this._cache.get(key)
 
     complete.push(...bookingSearch.results)
     if ('next' in bookingSearch.metadata) {
