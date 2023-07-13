@@ -1,4 +1,4 @@
-class JiraService extends Service {
+var JiraService = class JiraService extends Service {
   /**
    * @param {ApiConnector} jiraApi
    * @see @link https://script.google.com/home/projects/1TN1IOkW4-cvQfrmcqedSaQblG-ekjeB7-ghmpIfdp_R0N6I6cBHDH9H-

@@ -78,5 +78,13 @@
   {
     "projectId": "1WA9kpPX38p9xJq6a6AYQfqY5JnvTel6V_Ng-W5a3OPKmuszuTCoecjlb",
     "projectName": "td.library.telemetry"
+  },
+  {
+    "projectId": "1t6ycTBiAaQ206BGNE_9ljQKgdiHcSgR19cBP_Z1xHHhuzCpUjD5Vaiqz",
+    "projectName": "td.library.jira.time"
+  },
+  {
+    "projectId": "12EaVjVoddQz2VCinZqTpx0RrJWqJGEEpuTv3-eR3PiyTAGcx1YFL-fwp",
+    "projectName": "td.connect.leadtime"
   }
 ]
