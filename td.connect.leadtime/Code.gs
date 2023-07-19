@@ -1,3 +1,3 @@
-function issuesWithTimespentInTimeframe(startDate, endDate, projects, toStatus, types) {
-  return jiraTime.issuesWithTimespentInTimeframe(startDate, endDate, projects, toStatus, types)
+function issuesWithStatusChangeInTimeframe(startDate, endDate, projects, toStatus, types, keys) {
+  return jiraTime.issuesWithStatusChangeInTimeframe(startDate, endDate, projects, toStatus, types, keys)
 }

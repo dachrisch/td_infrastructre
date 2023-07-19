@@ -3,6 +3,10 @@ if ((typeof moment) === 'undefined') {
   eval(UrlFetchApp.fetch('https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.40/moment-timezone-with-data.min.js').getContentText());
 }
 
+function emptyElementsFilter(n) {
+  return n != null && n != [''] && n != ''
+}
+
 /**
  * connect function for use in spreadsheets
  * @param startDate {string} - Date in format DD.MM.YYYY
@@ -11,17 +15,18 @@ if ((typeof moment) === 'undefined') {
  * @param toStatus {string}
  * @param types {string | Array.<string>}
  */
-function issuesWithTimespentInTimeframe(startDate, endDate, projects, toStatus, types) {
+function issuesWithStatusChangeInTimeframe(startDate, endDate, projects, toStatus, types, keys = 'key, fields.issuetype.name, fields.timespent') {
   let username = 'c.daehn@techdivision.com'
   let scriptProps = new prop.ScripPropGetter()
   let jiraApi = api.createBasic(scriptProps.jiraEndpoint, username, scriptProps.jiraToken)
   let searchService = new JiraIssueSearchService(jiraApi)
 
-  return searchService.timespentInTimeframe(
+  return searchService.issuesWithStatusChangeInTimeframe(
     moment(startDate, 'DD.MM.YYYY'),
     moment(endDate, 'DD.MM.YYYY'),
-    projects.map ? projects : [projects],
+    projects.map ? projects.filter(emptyElementsFilter) : [projects],
     toStatus,
-    types.map ? types : [types]
+    types.map ? types.filter(emptyElementsFilter) : [types],
+    keys === null ? ['key'] : keys.split(',').map(k => k.trim())
   )
 }
