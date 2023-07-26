@@ -86,5 +86,9 @@
   {
     "projectId": "12EaVjVoddQz2VCinZqTpx0RrJWqJGEEpuTv3-eR3PiyTAGcx1YFL-fwp",
     "projectName": "td.connect.leadtime"
+  },
+  {
+    "projectId": "1WhugXxMFYmA7xMe0xn38apUjksAJHzvQhzamjdnNinpCwLYLQVh8Yvec",
+    "projectName": "td.connect.metrics.polaris"
   }
 ]

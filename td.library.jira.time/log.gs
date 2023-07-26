@@ -1,5 +1,5 @@
 var log = logger.getLog({
   sheetId: null,
-  level: logger.Level.INFO,
+  level: logger.Level.FINEST,
   useNativeLogger: true
 })

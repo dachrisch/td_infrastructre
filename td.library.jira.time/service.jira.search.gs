@@ -5,14 +5,14 @@ function importUnderscore() {
   }
 }
 
-var JiraIssueSearchService = class JiraIssueSearchService extends jira.JiraService {
+var JiraIssueStatusChangeSearchService = class JiraIssueStatusChangeSearchService extends jira.JiraSearchService {
   constructor(jiraApi) {
-    super(jiraApi.on('search'))
+    super(jiraApi)
     importUnderscore()
   }
 
   extractFieldKeys(keys) {
-    return keys.map(k=>k.split('.')).filter(k=>k[0]==='fields').map(k=>k[1])
+    return keys.map(k => k.split('.')).filter(k => k[0] === 'fields').map(k => k[1])
   }
 
   /**
@@ -31,21 +31,39 @@ var JiraIssueSearchService = class JiraIssueSearchService extends jira.JiraServi
     query += ` AND status CHANGED TO "${toStatus}" DURING ("${fromMoment.format('YYYY-MM-DD')}", "${toMoment.format('YYYY-MM-DD')}")`
     log.finest(`JQL: ${query}`)
     let params = { jql: query, fields: this.extractFieldKeys(keys).join(',') }
-    let issues = this.unpagesSearch(params).map(issue => keys.map(key =>  _.get(issue, key.split('.'))))
-    issues.forEach(i=>log.finest(i))
+    let issues = this.unpagedJQLSearch(params).map(issue => keys.map(key => _.get(issue, key.split('.'))))
+    issues.forEach(i => log.finest(i))
     return issues
   }
 
-  unpagesSearch(params, offset = 0) {
-    log.finest(`paged search with offset ${offset}: ${JSON.stringify(params)}`)
-    let allIssues = []
-    params.startAt = offset
-    let issuesSearch = this.jiraApi.fetchWithParams(params)
-    log.finest(issuesSearch)
-    allIssues.push(...issuesSearch.issues)
-    if (issuesSearch.startAt + issuesSearch.maxResults < issuesSearch.total) {
-      allIssues.push(...this.unpagesSearch(params, offset + issuesSearch.maxResults))
-    }
-    return allIssues
+}
+
+var JiraFieldSearchService = class JiraFieldSearchService extends jira.JiraSearchService {
+  constructor(jiraApi) {
+    super(jiraApi)
+    importUnderscore()
+  }
+
+  /**
+   * @param keys {Array.<string>}
+   * @returns {Array.<string>}
+   */
+  onlyFirstKey(keys) {
+    return keys.map(k => k.split('.')).map(k => k[0])
+  }
+
+  /**
+   * @param jql {string}
+   * @param fields {Array.<string>}
+   */
+  issueFieldsWithJQl(jql, fields = []) {
+    log.info(`searching issues with [${jql}], returning fields [${fields}]`)
+    let keys = ['key', ...fields.map(f=>`fields.${f}`)]
+    let unmappedIssues = this.unpagedJQLSearch({ jql: jql, fields: this.onlyFirstKey(fields) })
+
+    let issues = unmappedIssues.map(issue => keys.map(key => _.get(issue, key.split('.'))))
+    issues.forEach(i => log.finest(i))
+
+    return issues
   }
 }

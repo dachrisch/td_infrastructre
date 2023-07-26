@@ -19,7 +19,7 @@ function issuesWithStatusChangeInTimeframe(startDate, endDate, projects, toStatu
   let username = 'c.daehn@techdivision.com'
   let scriptProps = new prop.ScripPropGetter()
   let jiraApi = api.createBasic(scriptProps.jiraEndpoint, username, scriptProps.jiraToken)
-  let searchService = new JiraIssueSearchService(jiraApi)
+  let searchService = new JiraIssueStatusChangeSearchService(jiraApi)
 
   return searchService.issuesWithStatusChangeInTimeframe(
     moment(startDate, 'DD.MM.YYYY'),
@@ -29,4 +29,32 @@ function issuesWithStatusChangeInTimeframe(startDate, endDate, projects, toStatu
     types.map ? types.filter(emptyElementsFilter) : [types],
     keys === null ? ['key'] : keys.split(',').map(k => k.trim())
   )
+}
+
+/**
+ * @param jql {string} The JQL
+ * @param fields {Array.<Array.<string>>} (extra) fields to extract, like 'timespent' (directly from sheets range)
+ * @return {Array.<Array<any>>} The query result with key and all fields per row
+ */
+function issuesFromQueryWithFields(jql, fields = undefined) {
+  let username = 'c.daehn@techdivision.com'
+  let scriptProps = new prop.ScripPropGetter()
+  let jiraApi = api.createBasic(scriptProps.jiraEndpoint, username, scriptProps.jiraToken)
+
+  let searchService = new JiraFieldSearchService(jiraApi)
+
+  let flattenedFields = []
+  if (fields) {
+    if (fields.map && fields.length === 1 && fields[0].map) {
+      // horizontal
+      flattenedFields = fields[0]
+    } else if (fields.map && fields.length > 0 && fields[0].map === undefined) {
+      // vertical
+      flattenedFields = fields.map(f => f[0])
+    } else if (fields.map && fields.length > 0 && fields[0].map) {
+      throw `this data structure for fields is not allowed. Have you used a 2-dim array?: ${fields}`
+    }
+  }
+  let result = searchService.issueFieldsWithJQl(jql, flattenedFields)
+  return result.length > 0 ? result : null
 }
