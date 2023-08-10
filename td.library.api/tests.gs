@@ -1,5 +1,9 @@
 if ((typeof GasTap) === 'undefined') { // GasT Initialization. (only if not initialized yet.)
+  try {
   eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/master/src/gas-tap-lib.js').getContentText())
+  } catch {
+    console.log('ignoring test import error')
+  }
 } // Class GasTap is ready for use now!
 
 
