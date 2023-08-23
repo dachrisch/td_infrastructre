@@ -1,0 +1,21 @@
+{
+  "timeZone": "Europe/Berlin",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "TDJiraConnector",
+        "libraryId": "1B04jG0zZmOpPm1PTV1nKQ3iDwx792lxbwxD3FwZ_ke7UIV8_lo9gHhjR",
+        "version": "0",
+        "developmentMode": true
+      },
+      {
+        "userSymbol": "sw",
+        "libraryId": "1fFe0y-0iWKb_i8Jt_tZOaz3zejpQy3JgPZcKyGLKn9heQpVLpPUxt7vs",
+        "version": "0",
+        "developmentMode": true
+      }
+    ]
+  }
+}

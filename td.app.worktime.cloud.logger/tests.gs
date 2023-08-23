@@ -1,5 +1,3 @@
-var globalTest = false
-
 class AssertionError extends Error {
   constructor(message) {
     super(message)

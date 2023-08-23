@@ -11,18 +11,13 @@ function bookLast30days() {
  * @param {moment} then
  * @param {moment} then
  * @param {Array.<CalendarInstanceWrapper>} calendars
+ * @typedef {{startMoment:moment,endMoment:moment,title:string,bookingInfo:BookingInfo,eventId:string}} EventWrapper
+ * @param {function(EventWrapper):void} [eventFilter=anyEventsFilter]
  */
-function bookWorklogs(then, now, calendars) {
-  let username = Session.getActiveUser().getEmail()
-  let jiraApi = null
-  let tempoApi = null
-  if (globalTest) {
-    jiraApi = api.createBasic(scriptProperty('jiraTestEndpoint'), username, scriptProperty('jiraToken'))
-    tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoTestToken'))
-  } else {
-    jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
-    tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
-  }
+function bookWorklogs(then, now, calendars, eventFilter = anyEventsFilter) {
+  const username = Session.getActiveUser().getEmail()
+  const jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
+  const tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
 
   let issuesService = new jira.JiraIssueService(jiraApi)
   let worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
@@ -32,8 +27,8 @@ function bookWorklogs(then, now, calendars) {
   telemetry.start()
 
   calendars.forEach((calendar) => {
-    log.info(`checking ${calendar} from [${then}] to [${now}]`)
-    let calendarEvents = calendar.getEvents(then, now)
+    log.info(`checking ${calendar} from [${then}] to [${now}] using filter [${eventFilter}]`)
+    let calendarEvents = calendar.getEvents(then, now).filter(eventFilter)
     log.fine(`${calendarEvents.length} events in calendar ${calendar}`)
     let withBookingInfo = calendarEvents.filter(entity.EventWrapper.withBookingInfo)
     log.fine(`Events with Booking info ${withBookingInfo.length}`)
@@ -50,12 +45,4 @@ function bookWorklogs(then, now, calendars) {
     })
   })
   telemetry.end()
-}
-
-function bookSingle() {
-  let now = moment("31-05-2023", "DD-MM-YYYY")
-  let then = moment("25-05-2023", "DD-MM-YYYY")
-  let googleCalendar = new cWrap.CalendarAppWrapper()
-
-  bookWorklogs(then, now, googleCalendar.byName('worktimes'))
 }

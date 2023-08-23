@@ -1,0 +1,15 @@
+{
+  "timeZone": "Europe/Zurich",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "jiraTime",
+        "version": "0",
+        "libraryId": "1t6ycTBiAaQ206BGNE_9ljQKgdiHcSgR19cBP_Z1xHHhuzCpUjD5Vaiqz",
+        "developmentMode": true
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}
