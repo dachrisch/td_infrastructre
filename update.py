@@ -67,8 +67,9 @@ class GoogleProjectNameRetriever(object):
             script = BeautifulSoup(s.get(f'https://script.google.com/d/{script_id}/edit', cookies=self.cookies).content,
                                    'html.parser')
             title_parts = script.title.text.split(' - ')
-            assert title_parts[1] == 'Project Editor'
-            assert title_parts[2] == 'Apps Script'
+            assert len(title_parts) > 2, title_parts
+            assert title_parts[1] == 'Project Editor', title_parts
+            assert title_parts[2] == 'Apps Script', title_parts
             return title_parts[0]
 
 
