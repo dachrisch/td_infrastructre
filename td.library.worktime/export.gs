@@ -5,7 +5,7 @@ var exportWorktime = function exportWorktime(momentFrom, momentTo, spreadsheet) 
 
   telemetry.start()
 
-  let workedDays = calendarRetriever.retrieveWorkdays(momentFrom, momentTo)
+  let workedDays = calendarRetriever.retrieveBookable(momentFrom, momentTo)
   s.getSheet('worktimes').clear()
     .on('A1:B1').setHeader('Date', 'Hours').and()
     .on('A2:B').setValuesVariableLength(workedDays)

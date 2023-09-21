@@ -1,3 +1,11 @@
+const aggregatePerDay = (m, e) => {
+  let date = e.startMoment.format('DD.MM.YYYY')
+  let duration = e.duration().as('hours')
+  m.set(date, (m.get(date) || 0) + duration)
+  return m
+}
+
+
 class CalendarRetrieverService {
   /**
    * @param {CalandarService} calendarService
@@ -12,14 +20,13 @@ class CalendarRetrieverService {
    */
   retrieveWorkdays(momentFrom, momentTo) {
 
-    return [...this.calendarService.byName('worktimes').getEvents(momentFrom, momentTo)
-      .reduce(
-        (m, e) => {
-          let date = e.startMoment.format('DD.MM.YYYY')
-          let duration = e.duration().as('hours')
-          m.set(date, (m.get(date) || 0) + duration)
-          return m
-        }, new Map())];
+    return [...this.calendarService.byName('worktimes').getEvents(momentFrom, momentTo).reduce(aggregatePerDay, new Map())]
+  }
+
+  retrieveBookable(momentFrom, momentTo) {
+    return [...this.calendarService.all().reduce((allEvents, calendar) => allEvents.concat(calendar.getEvents(momentFrom, momentTo)), [])
+      .filter(e => e.bookingInfo.issueKey !== null)
+      .reduce(aggregatePerDay, new Map())]
   }
 
   /**

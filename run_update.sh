@@ -20,14 +20,7 @@ update_projects() {
 }
 
 git_push() {
-  git --no-pager diff
-  echo "What have you changed?"
-  read -r message
-  jq -c '.[]' projects.json | while read i; do
-      project_name=$(echo "$i"|jq -r .projectName)
-    git add "$project_name"/*
-  done
-  git commit -a -m"$message"
+  aicommits --all -g 3
   git push origin
   git push td_origin
 }

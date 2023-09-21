@@ -5,7 +5,7 @@ function updateKA() {
 }
 
 function bookKALastMonth() {
-  let now = moment()
+  let now = moment().startOf('day')
   let then = now.clone().subtract(1, 'month')
   let googleCalendar = new cWrap.CalendarAppWrapper()
 
@@ -16,7 +16,7 @@ function bookKALastMonth() {
  * @typedef {{tempoWorklogId:Number,description:string}} booking
  */
 function deleteKAFuture() {
-  const now = moment().add(1, 'days').startOf('day')
+  const now = moment().startOf('day')
   const then = now.clone().add(2, 'month')
 
   const username = Session.getActiveUser().getEmail()
@@ -33,7 +33,7 @@ function deleteKAFuture() {
 }
 
 function bookKAIntoFuture2Month() {
-  let now = moment()
+  let now = moment().startOf('day')
   let then = now.clone().add(2, 'month')
   let googleCalendar = new cWrap.CalendarAppWrapper()
 
