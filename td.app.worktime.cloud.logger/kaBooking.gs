@@ -1,6 +1,6 @@
 function updateKA() {
-  bookKALastMonth()
   deleteKAFuture()
+  bookKALastMonth()
   bookKAIntoFuture2Month()
 }
 
@@ -16,7 +16,7 @@ function bookKALastMonth() {
  * @typedef {{tempoWorklogId:Number,description:string}} booking
  */
 function deleteKAFuture() {
-  const now = moment().startOf('day')
+  const now = moment().subtract(1, 'day').startOf('day')
   const then = now.clone().add(2, 'month')
 
   const username = Session.getActiveUser().getEmail()

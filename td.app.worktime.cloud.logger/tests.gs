@@ -38,3 +38,23 @@ function bookFromTo() {
 
   bookWorklogs(then, now, googleCalendar.all())
 }
+
+function deleteDA() {
+  const now = moment().startOf('day').subtract(2, 'month')
+  const then = now.clone().add(2, 'month')
+
+  const username = Session.getActiveUser().getEmail()
+  const jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
+  const tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
+
+  const worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
+  const worklogsDeleteService = new jira.TempoWorklogDeleteService(tempoApi, jiraApi)
+
+  log.info(`deleting DA bookings from [${now}] to [${then}]`)
+  worklogsSearchService.bookingsInTimerange(now, then).filter(function (booking) {
+    console.log(booking.description)
+    return booking.description === 'DA - Umzug MS Events'
+  }).forEach((booking) => {
+    worklogsDeleteService.delete(booking.tempoWorklogId)
+  })
+}

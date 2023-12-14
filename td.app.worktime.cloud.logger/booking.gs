@@ -7,6 +7,22 @@ function bookLast30days() {
   bookWorklogs(then, now, googleCalendar.all())
 }
 
+class ErrorCollector {
+  constructor() {
+    this.errors = {}
+  }
+  collect(event, error) {
+    log.warning(`Registering error for [${event}]: ${error}`)
+    this.errors[event] = error
+  }
+
+  raiseOnError() {
+    if (this.errors) {
+      throw new Error(`The following events had errors: ${JSON.stringify(this.errors)}`)
+    }
+  }
+}
+
 /**
  * @param {moment} then
  * @param {moment} then
@@ -23,6 +39,7 @@ function bookWorklogs(then, now, calendars, eventFilter = anyEventsFilter) {
   let worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
   let worklogsBookService = new jira.TempoWorklogBookService(tempoApi, jiraApi)
 
+  let collector = new ErrorCollector()
   let telemetry = t.Telemetry.forSeries('book_worklogs')
   telemetry.start()
 
@@ -38,11 +55,20 @@ function bookWorklogs(then, now, calendars, eventFilter = anyEventsFilter) {
     withValidKeys.forEach((e) => log.finest(e))
     let bookable = withValidKeys.filter((event) => worklogsSearchService.hasNoBooking(event))
     log.info(`${bookable.length} Events without existing bookings`)
-     bookable.forEach((e)=> log.info(e))
+    bookable.forEach((e) => log.info(e))
     telemetry.count(bookable.length, `${calendar.name}: ${bookable.length}`)
     bookable.forEach((event) => {
-      worklogsBookService.book(event)
+      try {
+        worklogsBookService.book(event)
+      } catch (e) {
+        if (e.name == 'Error') {
+          collector.collect(event, e)
+        } else {
+          throw e
+        }
+      }
     })
   })
+  collector.raiseOnError()
   telemetry.end()
 }

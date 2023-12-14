@@ -120,7 +120,7 @@ class GoogleAppScriptProjectDownloader(object):
 
 def main(arguments_parser):
     arguments = arguments_parser.parse_args()
-    GoogleAppScriptProjectDownloader('Profile 2').download_project(arguments.project_id, arguments.directory)
+    GoogleAppScriptProjectDownloader('Profile 5').download_project(arguments.project_id, arguments.directory)
 
 
 if __name__ == '__main__':
