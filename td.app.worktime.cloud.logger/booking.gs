@@ -1,8 +1,40 @@
+function updateWorktime() {
+  deleteFutureAct()
+  bookFutureActThisMonth()
+  bookLast30days()
+}
+
+function deleteFutureAct() {
+  const now = moment().subtract(1, 'day').startOf('day')
+  const then = now.clone().endOf('month')
+
+  const username = Session.getActiveUser().getEmail()
+  const jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
+  const tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
+
+  const worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
+  const worklogsDeleteService = new jira.TempoWorklogDeleteService(tempoApi, jiraApi)
+
+  log.info(`deleting act bookings from [${now}] to [${then}]`)
+  worklogsSearchService.bookingsInTimerange(now, then).filter(actBookingsFilter).forEach((booking) => {
+    worklogsDeleteService.delete(booking.tempoWorklogId)
+  })
+
+}
+
+function bookFutureActThisMonth() {
+  const now = moment().startOf('day')
+  const then = now.clone().endOf('month')
+  const googleCalendar = new cWrap.CalendarAppWrapper()
+
+  bookWorklogs(now, then, googleCalendar.all(), actEventsFilter)
+}
+
 function bookLast30days() {
-  let numLastDays = 30
-  let now = moment()
-  let then = now.clone().subtract(numLastDays, 'days')
-  let googleCalendar = new cWrap.CalendarAppWrapper()
+  const numLastDays = 30
+  const now = moment()
+  const then = now.clone().subtract(numLastDays, 'days')
+  const googleCalendar = new cWrap.CalendarAppWrapper()
 
   bookWorklogs(then, now, googleCalendar.all())
 }
@@ -17,7 +49,7 @@ class ErrorCollector {
   }
 
   raiseOnError() {
-    if (this.errors) {
+    if (Object.keys(this.errors).length > 0) {
       throw new Error(`The following events had errors: ${JSON.stringify(this.errors)}`)
     }
   }
@@ -35,25 +67,25 @@ function bookWorklogs(then, now, calendars, eventFilter = anyEventsFilter) {
   const jiraApi = api.createBasic(scriptProperty('jiraEndpoint'), username, scriptProperty('jiraToken'))
   const tempoApi = api.createBearer(scriptProperty('tempoEndpoint'), scriptProperty('tempoToken'))
 
-  let issuesService = new jira.JiraIssueService(jiraApi)
-  let worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
-  let worklogsBookService = new jira.TempoWorklogBookService(tempoApi, jiraApi)
+  const issuesService = new jira.JiraIssueService(jiraApi)
+  const worklogsSearchService = new jira.TempoWorklogSearchService(tempoApi, jiraApi)
+  const worklogsBookService = new jira.TempoWorklogBookService(tempoApi, jiraApi)
 
-  let collector = new ErrorCollector()
-  let telemetry = t.Telemetry.forSeries('book_worklogs')
+  const collector = new ErrorCollector()
+  const telemetry = t.Telemetry.forSeries('book_worklogs')
   telemetry.start()
 
   calendars.forEach((calendar) => {
     log.info(`checking ${calendar} from [${then}] to [${now}] using filter [${eventFilter}]`)
-    let calendarEvents = calendar.getEvents(then, now).filter(eventFilter)
+    const calendarEvents = calendar.getEvents(then, now).filter(eventFilter)
     log.fine(`${calendarEvents.length} events in calendar ${calendar}`)
-    let withBookingInfo = calendarEvents.filter(entity.EventWrapper.withBookingInfo)
+    const withBookingInfo = calendarEvents.filter(entity.EventWrapper.withBookingInfo)
     log.fine(`Events with Booking info ${withBookingInfo.length}`)
     withBookingInfo.forEach((e) => log.finest(e))
-    let withValidKeys = withBookingInfo.filter((event) => issuesService.hasValidKey(event))
+    const withValidKeys = withBookingInfo.filter((event) => issuesService.hasValidKey(event))
     log.fine(`Events with valid keys ${withValidKeys.length}`)
     withValidKeys.forEach((e) => log.finest(e))
-    let bookable = withValidKeys.filter((event) => worklogsSearchService.hasNoBooking(event))
+    const bookable = withValidKeys.filter((event) => worklogsSearchService.hasNoBooking(event))
     log.info(`${bookable.length} Events without existing bookings`)
     bookable.forEach((e) => log.info(e))
     telemetry.count(bookable.length, `${calendar.name}: ${bookable.length}`)
